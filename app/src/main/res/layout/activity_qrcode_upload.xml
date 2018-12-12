@@ -36,6 +36,16 @@
             android:ems="10"
             android:inputType="textPersonName" />
 
+        <EditText
+            android:id="@+id/txt_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Name"
+            android:hint="二维码值"
+            android:ems="10"
+            android:inputType="text" />
+
+
         <Button
             android:id="@+id/btn_upload"
             style="@style/Widget.AppCompat.Button.Small"

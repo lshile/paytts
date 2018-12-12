@@ -18,7 +18,7 @@ public class LogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
-        container = (LinearLayout)findViewById(R.id.log_container);
+        container = findViewById(R.id.log_container);
     }
 
     @Override

@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         //腾讯的版本升级,日志,自己打包就去掉这个行
-//        Bugly.init(getApplicationContext(), BuildConst.BuglyId, false);
+        Bugly.init(getApplicationContext(), BuildConst.BuglyId, false);
 
         dbManager = new DBManager(this);
         String appid = readData(AppConst.KeyAppId);

@@ -16,7 +16,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -42,9 +41,13 @@ import java.util.regex.Pattern;
 public class NotificationMonitorService extends NotificationListenerService implements Runnable {
     private static final String AliPay = "ALIPAY";
     private static final String WeixinPay = "WXPAY";
+    private static final String JxYmf_Pay = "JXYMF";
+    private static final String JxYmf_PKG = "com.buybal.buybalpay.nxy.jxymf";
+//12-03 12:02:44.593 9737-9737/com.zhiyi.onepay I/ZYKJ: Notification posted [com.buybal.buybalpay.nxy.jxymf]:收款通知 & 一笔收款交易已完成，金额0.01元
     private static int version;
     //	private MyHandler handler;
     public long lastTimePosted = System.currentTimeMillis();
+    private Pattern pJxYmf_Nofity;
     private Pattern pAlipay;
     private Pattern pAlipay2;
     private Pattern pAlipayDianyuan;
@@ -54,6 +57,7 @@ public class NotificationMonitorService extends NotificationListenerService impl
     private MediaPlayer payNetWorkError;
     private PowerManager.WakeLock wakeLock;
     private DBManager dbManager;
+
 
 
     public void onCreate() {
@@ -69,6 +73,7 @@ public class NotificationMonitorService extends NotificationListenerService impl
         pAlipay2 = Pattern.compile(pattern);
         pAlipayDianyuan = Pattern.compile("支付宝成功收款([\\d\\.]+)元。收钱码收钱提现免费，赶紧推荐顾客使用");
         pWeixin = Pattern.compile("微信支付收款([\\d\\.]+)元");
+        pJxYmf_Nofity = Pattern.compile("一笔收款交易已完成，金额([\\d\\.]+)元");
         payComp = MediaPlayer.create(this, R.raw.paycomp);
         payRecv = MediaPlayer.create(this, R.raw.payrecv);
         payNetWorkError = MediaPlayer.create(this, R.raw.networkerror);
@@ -93,10 +98,8 @@ public class NotificationMonitorService extends NotificationListenerService impl
             }
         }
         Log.i("ZYKJ", "Notification Monitor Service start");
-// =======
         new Thread(this).start();
         Log.i(AppConst.TAG_LOG, "Notification Monitor Service start");
-//      >>>>>>> a263d3685d8e3cba5be9e8eab26c564355918af9
         NotificationManager mNM = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNM != null) {
             NotificationChannel mNotificationChannel = mNM.getNotificationChannel(AppConst.CHANNEL_ID);
@@ -158,6 +161,10 @@ public class NotificationMonitorService extends NotificationListenerService impl
         String title = bundle.getString("android.title");
         String text = bundle.getString("android.text");
         Log.i(AppConst.TAG_LOG, "Notification posted [" + pkgName + "]:" + title + " & " + text);
+        if(text == null){
+            //没有消息.垃圾
+            return;
+        }
         this.lastTimePosted = System.currentTimeMillis();
         //支付宝com.eg.android.AlipayGphone
         //com.eg.android.AlipayGphone]:支付宝通知 & 新哥通过扫码向你付款0.01元
@@ -195,6 +202,13 @@ public class NotificationMonitorService extends NotificationListenerService impl
                 String uname = "微信用户";
                 String money = m.group(1);
                 postMethod(WeixinPay, money, uname, false);
+            }
+        }else if(pkgName.equals(JxYmf_PKG)){
+            Matcher m = pJxYmf_Nofity.matcher(text);
+            if(m.find()){
+                String uname = "一码付";
+                String money = m.group(1);
+                postMethod(JxYmf_Pay, money, uname, false);
             }
         }
     }

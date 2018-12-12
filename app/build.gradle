@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
-
+def getCurrentTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
 android {
     signingConfigs {
         xpay {
@@ -14,13 +16,14 @@ android {
         applicationId 'com.zhiyi.onepay'
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1300
-        versionName "1.3.00"
+        versionCode 1301
+        versionName "1.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.xpay
         ndk {
             abiFilters 'armeabi-v7a' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
         }
+        flavorDimensions "versionCode"
     }
     buildTypes {
         release {
@@ -32,6 +35,13 @@ android {
         }
     }
     productFlavors {
+        pxpay{
+            applicationId "com.zhiyi.onepay"
+            manifestPlaceholders = [appName: "tencent"]
+            //buildConfigField "String" "abc" '"ok"'
+            resValue "string", "app_name3", "dev_myapp"
+        }
+
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
@@ -41,6 +51,16 @@ android {
         exclude 'META-INF/NOTICE.txt'
     }
     buildToolsVersion '27.0.3'
+    applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+
+                if (outputFileName != null && outputFileName.endsWith('.apk')) {
+                    def buildType = variant.buildType.name
+                    outputFileName = "PXPAY_${variant.productFlavors[0].name}-V${defaultConfig.versionName}-${getCurrentTime()}-${buildType}.apk"
+                }
+            }
+    }
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

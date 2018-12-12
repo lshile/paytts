@@ -3,6 +3,8 @@
     package="com.zhiyi.onepay"
     android:installLocation="internalOnly">
 
+    <meta-data android:name="PLAT_CHANNEL" android:value="tencent" />
+
     <uses-sdk
         android:minSdkVersion="19"
         android:targetSdkVersion="27" />

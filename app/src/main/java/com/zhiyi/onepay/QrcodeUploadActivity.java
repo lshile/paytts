@@ -37,6 +37,7 @@ public class QrcodeUploadActivity extends AppCompatActivity {
     private static String LOG_TAG = "ZYKJ";
     private EditText eMoney;
     private EditText eName;
+    private EditText txt_url;
     private Button upButton;
     private String qrcode;
     private String currentPhotoString;
@@ -55,6 +56,7 @@ public class QrcodeUploadActivity extends AppCompatActivity {
         img.setImageURI(Uri.fromFile(new File(currentPhotoString)));
         eMoney = findViewById(R.id.txt_money);
         eName = findViewById(R.id.txt_name);
+        txt_url = findViewById(R.id.txt_url);
         upButton = findViewById(R.id.btn_upload);
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,10 +162,13 @@ public class QrcodeUploadActivity extends AppCompatActivity {
 
     private void readTxt(final String file, final String url) {
         final int type;
+
         if (url.toUpperCase().startsWith("WXP://")) {
             type = QrCodeData.TYPE_WX;
         } else if (url.toUpperCase().startsWith("HTTPS://QR.ALIPAY.COM")) {
             type = QrCodeData.TYPE_ALI;
+        }else if(url.toLowerCase().startsWith("https://nxt.nongxinyin.com")){
+            type = QrCodeData.TYPE_JXYMF;
         } else {
             Log.w(LOG_TAG, "qrcode is not enable");
             Toast.makeText(this, "不支持选择的二维码,请选择支付宝/微信收款码", Toast.LENGTH_SHORT).show();
@@ -234,6 +239,25 @@ public class QrcodeUploadActivity extends AppCompatActivity {
                             }
                         } else if (type == QrCodeData.TYPE_ALI) {
                             Pattern aliNick = Pattern.compile("支付宝|LIPAY");
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject item = array.getJSONObject(i);
+                                if (item.has("itemstring")) {
+                                    String value = item.getString("itemstring");
+                                    Matcher m = pMoney.matcher(value);
+                                    if (m.find()) {
+                                        qrData.money = m.group(1);
+                                        continue;
+                                    }
+                                    m = aliNick.matcher(value);
+                                    if (m.find()) {
+                                        continue;
+                                    } else {
+                                        qrData.name = value;
+                                    }
+                                }
+                            }
+                        }else if(type == QrCodeData.TYPE_JXYMF){
+                            Pattern aliNick = Pattern.compile("订单金额");
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject item = array.getJSONObject(i);
                                 if (item.has("itemstring")) {

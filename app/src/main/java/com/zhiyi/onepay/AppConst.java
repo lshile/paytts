@@ -8,27 +8,44 @@ public class AppConst {
     public static final String KeyAppId = "appid";
     public static final String KeyToken = "token";
     public static final String KeySecret = "secret";
+    public static final String KeyNoticeUrl = "notice_url";
+    public static final String KeyNoticeAppId = "notice_appid";
+    public static final String KeyNoticeSecret = "notice_secret";
     public static final String KeyBoolLog = "b_set_log";
 //    public static final String KeyBoolWx = "b_set_wx";
 //    public static final String KeyBoolZfb = "b_set_zfb";
-    /** 音量*/
+    /**
+     * 音量
+     */
     public static final String KeyMute = "mute";
-    /**服务器地址*/
+    /**
+     * 服务器地址
+     */
 //    public static final String HostUrl = "https://pxpay.ukafu.com/";
-    public static final String HostUrl = "http://test.ukafu.com/";
+//    public static final String HostUrl = "http://test.ukafu.com/";
+//    public static final String HostUrl = "http://192.168.1.129:89/";
+    public static final String HostUrl = "http://47.244.138.4/";
+//    public static final String HostUrl = "http://103.46.136.107/";
 
-    /**传输数据为URL的KEY*/
+    /**
+     * 传输数据为URL的KEY
+     */
     public static final String ACTION_URL = "a_url";
 
     public static int version;
 
-    public static int Battery=0;
+    public static int Battery = 0;
 
     public static boolean PlaySounds = true;
-
-    public static int AppId=0;
-    public static String Token="";
-    public static String Secret="";
+    public static int AppId = 0;
+    public static String Token = "";
+    public static String Secret = "";
+    /**
+     * 通知url
+     */
+    public static String NoticeUrl = HostUrl;
+    public static int NoticeAppId = 0;
+    public static String NoticeSecret = "";
 
     public static int DetaTime = 0;//手机和服务器的时间差
 
@@ -39,11 +56,26 @@ public class AppConst {
     public static final int MT_Net_Response = 1;
     public static final int MT_Net_Toast = 1;
 
-    public static final  String CHANNEL_ID          = "zhi_yi_px_pay";
-    public static final  String CHANNEL_Front          = "zhi_yi_px_pay_front";
-    public static final  String CHANNEL_Test         = "zhi_yi_px_pay_test";
+    public static final String CHANNEL_ID = "zhi_yi_px_pay";
+    public static final String CHANNEL_Front = "zhi_yi_px_pay_front";
+    public static final String CHANNEL_Test = "zhi_yi_px_pay_test";
 
-    public static final String authUrl(String api){
-        return HostUrl+api+"?appid="+AppId+"&token="+Token;
+    /**
+     * 本地存储setting内容
+     */
+    public static final String SP_Setting = "setting_config";
+    public static final String SP_Setting_KeyHost = "host_server";
+
+    public static final String authUrl(String api) {
+        return HostUrl + api + "?appid=" + AppId + "&token=" + Token;
+    }
+
+    /**
+     * 通知url
+     * @param api
+     * @return
+     */
+    public static final String UrlGetByNotice(String api) {
+        return NoticeUrl + api + "?appid=" + AppId ;
     }
 }

@@ -3,6 +3,7 @@
     <string name="app_name2">个人支付专家</string>
     <string name="action_help">帮助</string>
     <string name="action_bindcode">获取绑定码</string>
+    <string name="action_setting">设置</string>
     <string name="action_exitapp">退出</string>
     <string name="action_apiset">自定义接口</string>>
     <!--<string name="title_activity_login">登录</string>-->
@@ -42,4 +43,13 @@
     <string name="title_activity_merchant">商户密钥</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_qrcode_upload">二维码上传</string>
+    <string name="title_activity_setting">SettingActivity</string>
+
+    <!-- Strings related to setting -->
+    <string name="label_server">服务器地址</string>
+    <string name="label_appid">App Id</string>
+    <string name="label_notice_uri">通知服务器地址</string>
+    <string name="label_secret">密钥</string>
+    <string name="msg_please_input_right_host_url">请正确输入通知服务器服务器地址</string>
+
 </resources>

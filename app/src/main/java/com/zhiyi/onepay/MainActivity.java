@@ -8,10 +8,12 @@ package com.zhiyi.onepay;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +35,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zhiyi.onepay.activitys.SettingActivity;
 import com.zhiyi.onepay.util.DBManager;
 import com.zhiyi.onepay.util.RequestUtils;
 
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             String code = msg.obj.toString();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("获取绑定码");
-            builder.setMessage("您得绑定码为: "+code+" ,请通过商户后台添加绑定,在绑定成功之前.请勿关闭");
+            builder.setMessage("您的绑定码为: "+code+" ,请通过商户后台添加绑定,在绑定成功之前.请勿关闭");
             builder.setIcon(R.drawable.icon);
             builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
@@ -121,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("ZYKJ", "mainactivity");
         setContentView(R.layout.activity_main);
-
         swt_fuwu = (Switch)findViewById(R.id.p1);
         swt_service = (Switch)findViewById(R.id.service);
         swt_mute = (Switch)findViewById(R.id.mute);
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         textView = (TextView)findViewById(R.id.textView_Help);
         dbm = new DBManager(this);
+        InitNoticeParam();
         //
         swt_mute.setChecked(!AppConst.PlaySounds);
         //
@@ -233,6 +236,18 @@ public class MainActivity extends AppCompatActivity {
         checkStatus();
     }
 
+    private void InitNoticeParam() {
+        //通知url
+        String noticeUrlStr = dbm.getConfig(AppConst.KeyNoticeUrl);
+        AppConst.NoticeUrl = TextUtils.isEmpty(noticeUrlStr) ? AppConst.HostUrl :noticeUrlStr;
+        //通知appid
+        String noticeAppIdStr = dbm.getConfig(AppConst.KeyNoticeAppId);
+        AppConst.NoticeAppId =TextUtils.isEmpty(noticeAppIdStr)? AppConst.AppId : Integer.parseInt(noticeAppIdStr);
+        //通知密钥
+        String noticeSecretStr = dbm.getConfig(AppConst.KeyNoticeSecret);
+        AppConst.NoticeSecret = TextUtils.isEmpty(noticeSecretStr) ? AppConst.Secret : noticeSecretStr;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -271,12 +286,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 break;
+            case R.id.action_setting:
+                OpenSetting();
+                break;
             case R.id.action_exitapp:
                 exit();
                 break;
         }
         return true;
     }
+
+    /**
+     * 设置界面
+     * */
+    private void OpenSetting(){
+        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+        startActivity(intent);
+    }
+
     /** 退出 */
     private void exit(){
         unbindService(conn);
@@ -299,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
         boolean enabled = isEnabled();
         enabedPrivileges = enabled;
         swt_fuwu.setChecked(enabled);
-        if(!enabled){
+        if(!enabled) {
             swt_service.setEnabled(false);
             return;
         }

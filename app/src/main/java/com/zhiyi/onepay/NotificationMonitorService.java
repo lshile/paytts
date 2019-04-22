@@ -277,10 +277,12 @@ public class NotificationMonitorService extends NotificationListenerService impl
     public void postMethod(final String payType, final String money, final String username, boolean dianYuan) {
         dbManager.addLog("new order:" + payType + "," + money + "," + username, 101);
         playMedia(payRecv);
-        String app_id = "" + AppConst.AppId;
+//        String app_id = "" + AppConst.AppId;
+        String app_id = "" + AppConst.NoticeAppId;
         String rndStr = AppUtil.randString(16);
         OrderData data = new OrderData(payType, money, username, dianYuan);
-        String sign = AppUtil.toMD5(app_id + AppConst.Secret + data.time + version + rndStr + payType + money + username);
+//        String sign = AppUtil.toMD5(app_id + AppConst.Secret + data.time + version + rndStr + payType + money + username);
+        String sign = AppUtil.toMD5(app_id + AppConst.NoticeSecret + data.time + version + rndStr + payType + money + username);
         data.sign = sign;
         data.ranStr = rndStr;
         postMethod(data);
@@ -290,10 +292,12 @@ public class NotificationMonitorService extends NotificationListenerService impl
         if (data == null) {
             return;
         }
-        RequestUtils.getRequest(AppConst.HostUrl + "person/notify/pay?type=" + data.payType
+//        RequestUtils.getRequest(AppConst.HostUrl + "person/notify/pay?type=" + data.payType
+        RequestUtils.getRequest(AppConst.NoticeUrl + "person/notify/pay?type=" + data.payType
                         + "&money=" + data.money
                         + "&uname=" + data.username
-                        + "&appid=" + "" + AppConst.AppId
+//                        + "&appid=" + "" + AppConst.AppId
+                        + "&appid=" + "" + AppConst.NoticeAppId
                         + "&rndstr=" + data.ranStr
                         + "&sign=" + data.sign
                         + "&time=" + data.time
@@ -323,18 +327,19 @@ public class NotificationMonitorService extends NotificationListenerService impl
     public void postState() {
         lastSendTime = System.currentTimeMillis();
         Log.d(AppConst.TAG_LOG, "发送在线信息");
-        RequestUtils.getRequest(AppConst.authUrl("person/state/online") + "&v=" + AppConst.version + "&b=" + AppConst.Battery, new IHttpResponse() {
-            @Override
-            public void OnHttpData(String data) {
-                handleMessage(data, 3);
-            }
+        if(AppConst.HostUrl.equals(AppConst.NoticeUrl)){
+            RequestUtils.getRequest(AppConst.authUrl("person/state/online") + "&v=" + AppConst.version + "&b=" + AppConst.Battery, new IHttpResponse() {
+                @Override
+                public void OnHttpData(String data) {
+                    handleMessage(data, 3);
+                }
 
-            @Override
-            public void OnHttpDataError(IOException e) {
-                Log.w(AppConst.TAG_LOG,e);
-            }
-        });
-
+                @Override
+                public void OnHttpDataError(IOException e) {
+                    Log.w(AppConst.TAG_LOG,e);
+                }
+            });
+        }
     }
 
 

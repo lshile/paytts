@@ -14,6 +14,7 @@ import android.util.Log;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Pattern;
 
 
 public class AppUtil {
@@ -77,5 +78,14 @@ public class AppUtil {
         return versionCode;
     }
 
+    /**
+     * 是不是url
+     * @param urlStr
+     * @return 是否为url
+     */
+    public  static boolean IsUrl(String urlStr) {
+        Pattern httpPattern = Pattern.compile("^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~/])+$");
+        return httpPattern.matcher(urlStr).matches();
+    }
 
 }

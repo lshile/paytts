@@ -48,6 +48,15 @@
                 android:textOn="@string/textOn" />
 
             <Switch
+                android:id="@+id/smsservice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="@string/action_to_sms"
+                android:textOff="@string/textOff"
+                android:textOn="@string/textOn" />
+
+            <Switch
                 android:id="@+id/mute"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

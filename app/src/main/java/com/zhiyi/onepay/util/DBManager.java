@@ -98,4 +98,21 @@ public class DBManager {
         return list;
     }
 
+    public String getUnid(){
+        Cursor c = db.query(tableaName+"_mt",new String[]{"mtid"},"",new String[]{},null,null,null);
+        String rs = "";
+        while (c.moveToNext()) {
+            rs = c.getString(c.getColumnIndex("mtid"));
+            break;
+        }
+        c.close();
+        return rs;
+    }
+
+    public long addUnid(String mtid){
+        ContentValues values = new ContentValues();
+        values.put("mtid",mtid);
+        return db.insert(tableaName+"_mt",null,values);
+    }
+
 }

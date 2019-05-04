@@ -24,7 +24,7 @@ public class AppConst {
 //    public static final String HostUrl = "https://pxpay.ukafu.com/";
 //    public static final String HostUrl = "http://test.ukafu.com/";
 //    public static final String HostUrl = "http://192.168.1.129:89/";
-    public static final String HostUrl = "http://47.244.138.4/";
+    public static final String HostUrl = "http://47.52.96.48/";
 //    public static final String HostUrl = "http://103.46.136.107/";
 
     /**
@@ -59,6 +59,8 @@ public class AppConst {
     public static final String CHANNEL_ID = "zhi_yi_px_pay";
     public static final String CHANNEL_Front = "zhi_yi_px_pay_front";
     public static final String CHANNEL_Test = "zhi_yi_px_pay_test";
+
+    public static final String TypeBANK = "";
 
     /**
      * 本地存储setting内容

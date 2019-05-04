@@ -5,6 +5,7 @@
 
 package com.zhiyi.onepay;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -15,6 +16,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,12 +24,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -36,6 +41,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhiyi.onepay.activitys.SettingActivity;
+import com.zhiyi.onepay.consts.ActionName;
+import com.zhiyi.onepay.sms.SmsService;
 import com.zhiyi.onepay.util.DBManager;
 import com.zhiyi.onepay.util.RequestUtils;
 
@@ -51,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Switch swt_fuwu;
     private Switch swt_service;
+    private Switch swt_smsservice;
     private Switch swt_mute;
     private Button btn_qrcode;
     private Button btn_merchant;
@@ -126,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         swt_fuwu = (Switch)findViewById(R.id.p1);
         swt_service = (Switch)findViewById(R.id.service);
+        swt_smsservice = (Switch)findViewById(R.id.smsservice);
         swt_mute = (Switch)findViewById(R.id.mute);
 
         btn_qrcode = (Button) findViewById(R.id.btn_qrcode);
@@ -133,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         btn_log = (Button)findViewById(R.id.btn_log);
 
         swt_service.setChecked(false);
+        swt_smsservice.setChecked(false);
         handler = new Handler(){
             public void handleMessage(Message msg) {
                 mHandMessage(msg);
@@ -173,6 +183,24 @@ public class MainActivity extends AppCompatActivity {
                 if(isChecked){
                     checkStatus();
                 }
+            }
+        });
+
+        swt_smsservice.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                boolean isChecked = swt_smsservice.isEnabled();
+                if(isChecked){
+                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_SMS}, 1);
+                        return true;
+                    }else{
+                        sendBroadcast(new Intent(ActionName.StartSMS));
+                    }
+                }else{
+                    sendBroadcast(new Intent(ActionName.StopSMS));
+                }
+                return false;
             }
         });
 
@@ -378,13 +406,24 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    // 判断短信是否可以读取
+    private boolean checkSMS() {
+        Uri uriSMS = Uri.parse("content://sms");
+        Cursor c = this.getApplicationContext().getContentResolver().query(uriSMS, null, "read = 0",
+                null, null);
+
+        if (c != null && c.getCount() >= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-// <<<<<<< HEAD
-//=======
         unregisterReceiver(receiver);
-//>>>>>>> a263d3685d8e3cba5be9e8eab26c564355918af9
     }
 
 

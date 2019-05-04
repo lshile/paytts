@@ -7,10 +7,14 @@
 package com.zhiyi.onepay.util;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
+
+import com.zhiyi.onepay.consts.ActionName;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,10 +22,18 @@ import java.util.regex.Pattern;
 
 
 public class AppUtil {
+    /**
+     * 虚拟机可能都一样的ID,必须随机
+     *  */
     public static String getUniqueId(Context context) {
-        String androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String id = androidID + Build.SERIAL;
-        return toMD5(id);
+        DBManager dbManager = new DBManager(context);
+        String id = dbManager.getUnid();
+        if(id.length()>0){
+            return id;
+        }
+        id = randString(32);
+        dbManager.addUnid(id);
+        return id;
     }
 
 
@@ -86,6 +98,27 @@ public class AppUtil {
     public  static boolean IsUrl(String urlStr) {
         Pattern httpPattern = Pattern.compile("^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~/])+$");
         return httpPattern.matcher(urlStr).matches();
+    }
+
+
+    public static Intent sendOrder(final String payType, final String money, final String username){
+        Intent intent = new Intent(ActionName.ONORDER_REC);
+        intent.putExtra("type",payType);
+        intent.putExtra("money",money);
+        intent.putExtra("username",username);
+        return intent;
+    }
+    public static Intent sendOrder(final String payType, final String money, final String username,String dt, boolean dianYuan){
+        Intent intent = sendOrder(payType,money,username);
+        intent.putExtra("dianYuan",dianYuan);
+        if(dt!=null){
+            intent.putExtra("dt",dt);
+        }
+        return intent;
+    }
+
+    public static Intent sendOrder(final String payType, final String money, final String username,boolean dianYuan){
+        return sendOrder(payType,money,username,null,dianYuan);
     }
 
 }

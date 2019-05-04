@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">PXPAY</string>
-    <string name="app_name2">个人支付专家</string>
+    <string name="app_name">UKAFU</string>
+    <string name="app_name2">UKAFU安卓监控</string>
+    <string name="app_desc">UKAFU安卓监控</string>
+    <string name="app_desc2">监控程序</string>
     <string name="action_help">帮助</string>
     <string name="action_bindcode">获取绑定码</string>
     <string name="action_setting">设置</string>
@@ -12,6 +14,7 @@
     <string name="action_sign_in">登录</string>
     <string name="action_confirm">确定</string>
     <string name="action_to_open">"支付服务"</string>
+    <string name="action_to_sms">"监控短信"</string>
     <string name="action_to_wx">微信</string>
     <string name="action_to_zfb">支付宝</string>
     <string name="action_to_log">日志记录</string>
@@ -51,5 +54,6 @@
     <string name="label_notice_uri">通知服务器地址</string>
     <string name="label_secret">密钥</string>
     <string name="msg_please_input_right_host_url">请正确输入通知服务器服务器地址</string>
+
 
 </resources>

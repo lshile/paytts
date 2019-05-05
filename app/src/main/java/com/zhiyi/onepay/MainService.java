@@ -143,12 +143,17 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
 
     public void receiveBroadcast(Context context, Intent intent) {
         String  action = intent.getAction();
-        if(ActionName.ONORDER_REC.equals(action)){
-
-        }else if(ActionName.StartSMS.equals(action)){
-            smsService.registerSMSObserver(this);
+        switch (action){
+            case ActionName.StartSMS:
+                smsService.registerSMSObserver(this);
+                break;
+            case ActionName.StopSMS:
+                smsService.registerSMSObserver(this);
+                break;
+            case ActionName.ONORDER_REC:
+                postMethod(intent);
+                break;
         }
-
     }
 
     class MyBinder extends Binder{

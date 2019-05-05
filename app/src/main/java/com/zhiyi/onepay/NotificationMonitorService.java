@@ -167,7 +167,7 @@ public class NotificationMonitorService extends NotificationListenerService {
         }
         //微信
         //com.tencent.mm]:微信支付 & 微信支付收款0.01元
-        else if (pkgName.equals("com.tencent.mm") && text != null) {
+        else if (pkgName.equals("com.tencent.mm")) {
             // 现在创建 matcher 对象
             Matcher m = pWeixin.matcher(text);
             if (m.find()) {

@@ -6,8 +6,6 @@
 package com.zhiyi.onepay.util;
 
 
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 
@@ -17,7 +15,6 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-import com.zhiyi.onepay.AppConst;
 import com.zhiyi.onepay.IHttpResponse;
 
 //import org.apache.http.HttpEntity;
@@ -29,6 +26,8 @@ import com.zhiyi.onepay.IHttpResponse;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import okio.BufferedSink;
 
 //import okhttp3.MediaType;
 //import okhttp3.OkHttpClient;
@@ -50,9 +49,7 @@ public class RequestUtils {
             client.setWriteTimeout(5,TimeUnit.SECONDS);
         }
         Log.i("ZYKJ","request: "+url);
-        Request request = new Request.Builder()
-                .url(url).tag(url)
-                .build();
+        Request request = new Request.Builder().url(url).tag(url).build();
             client.newCall(request).enqueue(new Callback(){
 
                 @Override
@@ -105,18 +102,41 @@ public class RequestUtils {
 //        }).start();//这个start()方法不要忘记了
     }
 
-    public static String post(String url, String json){
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-        try {
-            Response response = client.newCall(request).execute();
-            return response.body().string();
-        } catch (IOException e) {
-            Log.e("ZYKJ",e.getMessage());
+    public static void post(final String url,final String data,final IHttpResponse callback){
+        if(client == null){
+            client = new OkHttpClient();
+            client.setConnectTimeout(5, TimeUnit.SECONDS);
+            client.setReadTimeout(5,TimeUnit.SECONDS);
+            client.setWriteTimeout(5,TimeUnit.SECONDS);
         }
-        return "";
+        Log.i("ZYKJ","request: "+url);
+        RequestBody body = new RequestBody() {
+            @Override
+            public MediaType contentType() {
+                return JSON;
+            }
+
+            @Override
+            public void writeTo(BufferedSink bufferedSink) throws IOException {
+                bufferedSink.writeUtf8(data);
+            }
+        };
+        Request request = new Request.Builder()
+                .url(url).tag(url).post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback(){
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Log.e("ZYKJ",e.getMessage()+":"+url);
+                callback.OnHttpDataError(e);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String rs = response.body().string();
+                Log.i("ZYKJ","response: "+rs);
+                callback.OnHttpData(rs);
+            }
+        });
     }
 }

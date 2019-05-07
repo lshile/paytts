@@ -26,7 +26,9 @@ import android.util.Log;
 
 import com.zhiyi.onepay.components.BatteryReceiver;
 import com.zhiyi.onepay.consts.ActionName;
+import com.zhiyi.onepay.data.MapOrderData;
 import com.zhiyi.onepay.data.OrderData;
+import com.zhiyi.onepay.data.OrderDataBase;
 import com.zhiyi.onepay.sms.SmsService;
 import com.zhiyi.onepay.util.AppUtil;
 import com.zhiyi.onepay.util.DBManager;
@@ -43,23 +45,22 @@ import java.util.ArrayList;
  * 后台进程.确保进入后台也在运行
  */
 public class MainService extends Service implements Runnable, MediaPlayer.OnCompletionListener{
-    private static int version;
     private Handler handler;
     private IMessageHander msgHander;
     private MediaPlayer payComp;
     private MediaPlayer payNetWorkError;
     private MediaPlayer payRecv;
-    private ArrayList<OrderData> sendingList;
+    private ArrayList<OrderDataBase> sendingList;
     private DBManager dbManager;
     private PowerManager.WakeLock wakeLock;
     private BroadcastReceiver aliReceiver;
-    public static final  String CHANNEL_ID          = "zhi_yi_px_pay";
+//    public static final  String CHANNEL_ID          = "zhi_yi_px_pay";
     private NotificationChannel mNotificationChannel;
     private SmsService smsService;
     @Override
     public void onCreate() {
         super.onCreate();
-        version = AppUtil.getVersionCode(this);
+        AppConst.version = AppUtil.getVersionCode(this);
         sendingList = new ArrayList<>();
         Log.i("ZYKJ", "mainactivity");
         handler = new Handler(getMainLooper()){
@@ -82,6 +83,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         };
         IntentFilter filter = new IntentFilter();
         filter.addAction(ActionName.ONORDER_REC);
+        filter.addAction(ActionName.ONORDER_NOTIFY);
         filter.addAction(ActionName.StartSMS);
         registerReceiver(aliReceiver,filter);
 
@@ -151,7 +153,10 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                 smsService.registerSMSObserver(this);
                 break;
             case ActionName.ONORDER_REC:
-                postMethod(intent);
+                postMethod(intent,false);
+                break;
+            case ActionName.ONORDER_NOTIFY:
+                postMethod(intent,true);
                 break;
         }
     }
@@ -185,7 +190,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                 Log.e(AppConst.TAG_LOG, "service thread", e);
             }
             if(!sendingList.isEmpty()) {
-                OrderData data;
+                OrderDataBase data;
                 synchronized (sendingList){
                     data = sendingList.remove(0);
                 }
@@ -213,54 +218,43 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
 
     }
 
-    private void postMethod(final OrderData data) {
+    private void postMethod(final OrderDataBase data) {
         if (data == null) {
             return;
         }
-        RequestUtils.getRequest(AppConst.NoticeUrl + "person/notify/pay?type=" + data.payType
-                        + "&money=" + data.money
-                        + "&uname=" + data.username
-//                        + "&appid=" + "" + AppConst.AppId
-                        + "&appid=" + "" + AppConst.NoticeAppId
-                        + "&rndstr=" + data.ranStr
-                        + "&sign=" + data.sign
-                        + "&time=" + data.time
-                        + "&dianyuan=" + data.dianYuan
-                        + "&version=" + version
-                , new IHttpResponse() {
-                    @Override
-                    public void OnHttpData(String data) {
-                        dbManager.addLog(data, 200);
-                        handleMessage(data, 1);
-                    }
+        IHttpResponse response = new IHttpResponse() {
+            @Override
+            public void OnHttpData(String data) {
+                dbManager.addLog(data, 200);
+                handleMessage(data, 1);
+            }
 
-                    @Override
-                    public void OnHttpDataError(IOException e) {
-                        dbManager.addLog("http error," + e.getMessage(), 500);
-                        sendingList.add(data);
-                    }
-                });
+            @Override
+            public void OnHttpDataError(IOException e) {
+                dbManager.addLog("http error," + e.getMessage(), 500);
+                sendingList.add(data);
+            }
+        };
+        if(data.isPost()){
+            RequestUtils.post(data.getApiUrl(),data.getOrderData(),response);
+        }else{
+            RequestUtils.getRequest(data.getApiUrl(),response);
+        }
     }
 
 
     /**
      * 获取道的支付通知发送到服务器
      */
-    public void postMethod(Intent intent) {
-        final String payType = intent.getStringExtra("type");
-        final String money = intent.getStringExtra("type");
-        final String username = intent.getStringExtra("type");
-        boolean dianYuan = intent.getBooleanExtra("type",false);
-        dbManager.addLog("new order:" + payType + "," + money + "," + username, 101);
+    private void postMethod(Intent intent,boolean map) {
+        OrderDataBase data;
+        if(map){
+            data = new MapOrderData(intent);
+        }else{
+            data = new OrderData(intent);
+        }
+        dbManager.addLog(data.getLogString(), 101);
         playMedia(payRecv);
-//        String app_id = "" + AppConst.AppId;
-        String app_id = "" + AppConst.NoticeAppId;
-        String rndStr = AppUtil.randString(16);
-        OrderData data = new OrderData(payType, money, username, dianYuan);
-//        String sign = AppUtil.toMD5(app_id + AppConst.Secret + data.time + version + rndStr + payType + money + username);
-        String sign = AppUtil.toMD5(app_id + AppConst.NoticeSecret + data.time + version + rndStr + payType + money + username);
-        data.sign = sign;
-        data.ranStr = rndStr;
         postMethod(data);
     }
 

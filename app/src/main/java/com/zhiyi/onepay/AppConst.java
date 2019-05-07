@@ -24,7 +24,7 @@ public class AppConst {
 //    public static final String HostUrl = "https://pxpay.ukafu.com/";
 //    public static final String HostUrl = "http://test.ukafu.com/";
 //    public static final String HostUrl = "http://192.168.1.129:89/";
-    public static final String HostUrl = "http://47.52.96.48/";
+    public static final String HostUrl = "http://faka.ukafu.com/";
 //    public static final String HostUrl = "http://103.46.136.107/";
 
     /**

@@ -22,9 +22,16 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.zhiyi.onepay.consts.ActionName;
 import com.zhiyi.onepay.util.AppUtil;
 import com.zhiyi.onepay.util.DBManager;
+import com.zhiyi.onepay.util.RequestUtils;
+import com.zhiyi.onepay.worker.NotifyFilter;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +41,7 @@ public class NotificationMonitorService extends NotificationListenerService {
     private static final String JxYmf_Pay = "JXYMF";
     private static final String JxYmf_PKG = "com.buybal.buybalpay.nxy.jxymf";
 
-    public long lastTimePosted = System.currentTimeMillis();
+//    public long lastTimePosted = System.currentTimeMillis();
     private Pattern pJxYmf_Nofity;
     private Pattern pAlipay;
     private Pattern pAlipay2;
@@ -44,11 +51,12 @@ public class NotificationMonitorService extends NotificationListenerService {
     private DBManager dbManager;
     private PowerManager.WakeLock wakeLock;
 
+    private NotifyFilter filter;
 
 
     public void onCreate() {
         super.onCreate();
-
+        initFilter();
         Log.i(AppConst.TAG_LOG, "Notification posted ");
         Toast.makeText(getApplicationContext(), "启动服务", Toast.LENGTH_LONG).show();
         //支付宝
@@ -80,7 +88,6 @@ public class NotificationMonitorService extends NotificationListenerService {
                 AppConst.PlaySounds = Boolean.parseBoolean(mute);
             }
         }
-        Log.i("ZYKJ", "Notification Monitor Service start");
         Log.i(AppConst.TAG_LOG, "Notification Monitor Service start");
         NotificationManager mNM = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNM != null) {
@@ -137,10 +144,15 @@ public class NotificationMonitorService extends NotificationListenerService {
             //没有消息.垃圾
             return;
         }
-        this.lastTimePosted = System.currentTimeMillis();
+        HashMap<String,String> fdata = filter.test(bundle,pkgName);
+        if(fdata!=null){
+            postMethod(fdata);
+            return;
+        }
+//        this.lastTimePosted = System.currentTimeMillis();
         //支付宝com.eg.android.AlipayGphone
         //com.eg.android.AlipayGphone]:支付宝通知 & 新哥通过扫码向你付款0.01元
-        if (pkgName.equals("com.eg.android.AlipayGphone") && text != null) {
+        if (pkgName.equals("com.eg.android.AlipayGphone")) {
             // 现在创建 matcher 对象
             do {
                 Matcher m = pAlipay.matcher(text);
@@ -204,10 +216,38 @@ public class NotificationMonitorService extends NotificationListenerService {
     private void postMethod(final String payType, final String money, final String username, boolean dianYuan) {
         sendBroadcast(AppUtil.sendOrder(payType,money,username,dianYuan));
     }
+    private void postMethod(HashMap<String,String> data) {
+        if(data.isEmpty()){
+            return;
+        }
+        Intent intent = new Intent(ActionName.ONORDER_NOTIFY);
+        intent.putExtra("data",data);
+        sendBroadcast(intent);
+    }
 
     private void playMedia(MediaPlayer media) {
         if (AppConst.PlaySounds) {
             media.start();
         }
     }
+
+    public void initFilter() {
+        filter = new NotifyFilter();
+        RequestUtils.post("https://www.ukafu.com/api.php/portal/filter/nfilter", "appid="+AppConst.AppId, new IHttpResponse() {
+            @Override
+            public void OnHttpData(String data) {
+                try {
+                    filter.initData(data);
+                } catch (JSONException e) {
+                    Log.e(AppConst.TAG_LOG,"filter init error",e);
+                }
+            }
+
+            @Override
+            public void OnHttpDataError(IOException e) {
+
+            }
+        });
+    }
+
 }

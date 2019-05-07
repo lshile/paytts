@@ -22,6 +22,7 @@ public class MapOrderData extends OrderDataBase{
         Serializable data = intent.getSerializableExtra("data");
         map = (HashMap<String, String>) data;
         map.put("time",""+time);
+        map.put("rndStr",rndStr);
         map.put("appid",""+AppConst.AppId);
         payType = map.get("paytype");
         name = map.get("name");

@@ -34,7 +34,7 @@ public class MapOrderData extends OrderDataBase{
 
     @Override
     public String getApiUrl() {
-        return AppConst.HostUrl+"pay/notify";
+        return AppConst.NoticeUrl;
     }
 
     @Override

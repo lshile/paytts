@@ -45,6 +45,7 @@ import com.zhiyi.onepay.consts.ActionName;
 import com.zhiyi.onepay.sms.SmsService;
 import com.zhiyi.onepay.util.DBManager;
 import com.zhiyi.onepay.util.RequestUtils;
+import com.zhiyi.onepay.util.ToastUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -222,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                     Intent intent = new Intent();
-                    intent.setData(Uri.parse(AppConst.HostUrl+"help.html"));//Url 就是你要打开的网址
+                    intent.setData(Uri.parse("https://www.ukafu.com/help.html"));//Url 就是你要打开的网址
                     intent.setAction(Intent.ACTION_VIEW);
                     startActivity(intent); //启动浏览器
             }
@@ -267,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
     private void InitNoticeParam() {
         //通知url
         String noticeUrlStr = dbm.getConfig(AppConst.KeyNoticeUrl);
-        AppConst.NoticeUrl = TextUtils.isEmpty(noticeUrlStr) ? AppConst.HostUrl :noticeUrlStr;
+        AppConst.NoticeUrl = TextUtils.isEmpty(noticeUrlStr) ? AppConst.HostUrl+"person/notify/pay" :noticeUrlStr;
         //通知appid
         String noticeAppIdStr = dbm.getConfig(AppConst.KeyNoticeAppId);
         AppConst.NoticeAppId =TextUtils.isEmpty(noticeAppIdStr)? AppConst.AppId : Integer.parseInt(noticeAppIdStr);
@@ -291,29 +292,32 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bindcode:
-                RequestUtils.getRequest(AppConst.authUrl("person/Merchant/addBindCode"), new IHttpResponse() {
-                    @Override
-                    public void OnHttpData(String data) {
-                        try{
-                            JSONObject json = new JSONObject(data);
-                            String code = ""+json.getJSONObject("data").getInt("bind_code");
-                            Message msg = new Message();
-                            msg.what = 1;
-                            msg.obj = code;
-                            MainActivity.this.handler.sendMessage(msg);
-                        }
-                        catch (JSONException je){
-                                Log.i("yyk","msg === "+je.getMessage());
-                        }
-
-                    }
-
-                    @Override
-                    public void OnHttpDataError(IOException e) {
-
-                    }
-                });
+                ToastUtil.show(this,"开源版本已去除服务器支持.请直接填写自己的服务器地址和参数");
                 break;
+                //不在绑定服务器.
+//                RequestUtils.getRequest(AppConst.authUrl("person/Merchant/addBindCode"), new IHttpResponse() {
+//                    @Override
+//                    public void OnHttpData(String data) {
+//                        try{
+//                            JSONObject json = new JSONObject(data);
+//                            String code = ""+json.getJSONObject("data").getInt("bind_code");
+//                            Message msg = new Message();
+//                            msg.what = 1;
+//                            msg.obj = code;
+//                            MainActivity.this.handler.sendMessage(msg);
+//                        }
+//                        catch (JSONException je){
+//                                Log.i("yyk","msg === "+je.getMessage());
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void OnHttpDataError(IOException e) {
+//
+//                    }
+//                });
+//                break;
             case R.id.action_setting:
                 OpenSetting();
                 break;

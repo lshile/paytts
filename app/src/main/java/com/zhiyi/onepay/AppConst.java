@@ -24,8 +24,9 @@ public class AppConst {
 //    public static final String HostUrl = "https://pxpay.ukafu.com/";
 //    public static final String HostUrl = "http://test.ukafu.com/";
 //    public static final String HostUrl = "http://192.168.1.129:89/";
-    public static final String HostUrl = "http://faka.ukafu.com/";
-//    public static final String HostUrl = "http://103.46.136.107/";
+//    public static final String HostUrl = "http://faka.ukafu.com/";
+
+    public static final String HostUrl = "https://www.ukafu.com/";
 
     /**
      * 传输数据为URL的KEY
@@ -40,6 +41,7 @@ public class AppConst {
     public static int AppId = 0;
     public static String Token = "";
     public static String Secret = "";
+    public static String Online = "";
     /**
      * 通知url
      */
@@ -72,12 +74,4 @@ public class AppConst {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;
     }
 
-    /**
-     * 通知url
-     * @param api
-     * @return
-     */
-    public static final String UrlGetByNotice(String api) {
-        return NoticeUrl + api + "?appid=" + AppId ;
-    }
 }

@@ -9,15 +9,10 @@
     android:title="@string/action_bindcode"/>
     <item
         android:id="@+id/action_setting"
-        android:orderInCategory="150"
-        android:title="@string/action_setting"/>
+        android:orderInCategory="200"
+        android:title="@string/action_apiset"/>
     <item
         android:id="@+id/action_exitapp"
         android:orderInCategory="200"
         android:title="@string/action_exitapp"/>
-    <item
-        android:id="@+id/action_apisett"
-        android:orderInCategory="200"
-        android:enabled="false"
-        android:title="@string/action_apiset"/>
 </menu>

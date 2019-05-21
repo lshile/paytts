@@ -302,19 +302,25 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     public void postState() {
         lastSendTime = System.currentTimeMillis();
         Log.d(AppConst.TAG_LOG, "发送在线信息");
-        if(AppConst.HostUrl.equals(AppConst.NoticeUrl)){
-            RequestUtils.getRequest(AppConst.authUrl("person/state/online") + "&v=" + AppConst.version + "&b=" + AppConst.Battery, new IHttpResponse() {
-                @Override
-                public void OnHttpData(String data) {
-                    handleMessage(data, 3);
-                }
+        //取消发送在线消息
+//        if(AppConst.NoticeUrl.indexOf(AppConst.HostUrl)==0){
+//            RequestUtils.getRequest(AppConst.authUrl("person/state/online") + "&v=" + AppConst.version + "&b=" + AppConst.Battery, new IHttpResponse() {
+//                @Override
+//                public void OnHttpData(String data) {
+//                    handleMessage(data, 3);
+//                }
+//
+//                @Override
+//                public void OnHttpDataError(IOException e) {
+//                    Log.w(AppConst.TAG_LOG,e);
+//                }
+//            });
+//        }else{
+//            lastNetTime = System.currentTimeMillis();
+//        }
+        //取消发送在线消息
 
-                @Override
-                public void OnHttpDataError(IOException e) {
-                    Log.w(AppConst.TAG_LOG,e);
-                }
-            });
-        }
+
     }
 
 

@@ -11,6 +11,9 @@ public class AppConst {
     public static final String KeyNoticeUrl = "notice_url";
     public static final String KeyNoticeAppId = "notice_appid";
     public static final String KeyNoticeSecret = "notice_secret";
+    public static final String KeyUKFNoticeUrl = "uk_notice_url";
+    public static final String KeyUKFNoticeAppId = "uk_notice_appid";
+    public static final String KeyUKFNoticeSecret = "uk_notice_secret";
     public static final String KeyBoolLog = "b_set_log";
 //    public static final String KeyBoolWx = "b_set_wx";
 //    public static final String KeyBoolZfb = "b_set_zfb";
@@ -69,6 +72,10 @@ public class AppConst {
      */
     public static final String SP_Setting = "setting_config";
     public static final String SP_Setting_KeyHost = "host_server";
+    /**
+     * 网络交互KEY
+     *  */
+    public static final String NetTypeLogin="login";
 
     public static final String authUrl(String api) {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;

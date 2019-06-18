@@ -24,6 +24,8 @@ import com.zhiyi.onepay.IHttpResponse;
 //import org.apache.http.impl.client.DefaultHttpClient;
 //import org.apache.http.util.EntityUtils;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -102,6 +104,11 @@ public class RequestUtils {
 //        }).start();//这个start()方法不要忘记了
     }
 
+
+
+    public static void post(final String url, final RequestData data, final IHttpResponse callback){
+        post(url,data.toString(),callback);
+    }
     public static void post(final String url,final String data,final IHttpResponse callback){
         if(client == null){
             client = new OkHttpClient();

@@ -70,6 +70,10 @@ public class SettingActivity extends AppCompatActivity {
         view.setAdapter(adapter);
     }
 
+    public void copyAppid(){
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

@@ -54,6 +54,7 @@
     <string name="label_notice_uri">通知服务器地址</string>
     <string name="label_secret">密钥</string>
     <string name="msg_please_input_right_host_url">请正确输入通知服务器服务器地址</string>
+    <string name="title_activity_init">InitActivity</string>
 
 
 </resources>

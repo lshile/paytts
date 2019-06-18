@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
+
 def getCurrentTime() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
+
 android {
     signingConfigs {
         xpay {
@@ -35,7 +37,7 @@ android {
         }
     }
     productFlavors {
-        pxpay{
+        pxpay {
             applicationId "com.zhiyi.onepay"
             manifestPlaceholders = [appName: "tencent"]
             //buildConfigField "String" "abc" '"ok"'
@@ -76,8 +78,10 @@ dependencies {
 
     //implementation 'com.github.open-android:Zxing:v1.0.3'
     //注释掉原有bugly的仓库
-    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
-    implementation 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
+    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
+//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
 }
 
 

@@ -17,7 +17,14 @@ import java.io.IOException;
 
 public class StringUtils {
 
-	public static void main(String[] args) {
+	public static boolean isEmpty(String args) {
+		if(args == null){
+			return true;
+		}
+		if(args.trim().length()<1){
+			return true;
+		}
+		return false;
 	}
 
 	/**

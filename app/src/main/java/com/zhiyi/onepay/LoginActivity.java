@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
     private DBManager dbManager;
     private Handler handler;
+    private Button copyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

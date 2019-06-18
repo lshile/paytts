@@ -53,5 +53,12 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:layout_toRightOf="@id/text_view_notice_uri"/>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="复制APPID"
+            android:visibility="visible" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

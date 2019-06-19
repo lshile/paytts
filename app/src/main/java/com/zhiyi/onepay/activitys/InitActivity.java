@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,7 +39,7 @@ public class InitActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         dbm = new DBManager(this);
-        String url = dbm.getConfig(AppConst.KeyUKFNoticeUrl);
+        String url = "http://faka.ukafu.com/notify_api";//dbm.getConfig(AppConst.KeyUKFNoticeUrl);
         if(!StringUtils.isEmpty(url)){
             EditText editText = findViewById(R.id.edit_apiurl);
             editText.setText(url);
@@ -69,29 +70,54 @@ public class InitActivity extends AppCompatActivity {
         AppConst.NoticeUrl = url;
         dbm.setConfig(AppConst.KeyUKFNoticeUrl,url);
         String uniqueId = AppUtil.getUniqueId(this);
+        String appid = dbm.getConfig(AppConst.KeyUKFNoticeAppId);
+        String token = dbm.getConfig(AppConst.KeyUKFNoticeToken);
         RequestData post = RequestData.newInstance(AppConst.NetTypeLogin);
         try {
             post.put("device_id",uniqueId);
+            if(!StringUtils.isEmpty(appid)){
+                post.put(AppConst.KeyAppId,appid);
+                post.put(AppConst.KeyToken,token);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         RequestUtils.post(url, post, new IHttpResponse() {
             @Override
             public void OnHttpData(String data) {
-                sendBroadcast(new Intent(InitActivity.this,MainActivity.class));
+                try {
+                    JSONObject jsonObject = new JSONObject(data);
+
+                    if(jsonObject.has(AppConst.KeyAppId)){
+                        AppConst.AppId = jsonObject.getInt(AppConst.KeyAppId);
+                        dbm.setConfig(AppConst.KeyUKFNoticeAppId,""+AppConst.AppId);
+                    }
+                    if(jsonObject.has(AppConst.KeyToken)){
+                        AppConst.Token = jsonObject.getString(AppConst.KeyToken);
+                        dbm.setConfig(AppConst.KeyUKFNoticeToken,AppConst.Token);
+                    }
+                    if(jsonObject.has(AppConst.KeySecret)){
+                        AppConst.Secret = jsonObject.getString(AppConst.KeySecret);
+                        dbm.setConfig(AppConst.KeyUKFNoticeSecret,AppConst.Secret);
+                    }
+                } catch (JSONException e) {
+                    Log.e(AppConst.TAG_LOG,"login error",e);
+                }
+                startActivity(new Intent(InitActivity.this,MainActivity.class));
                 InitActivity.this.finish();
             }
 
             @Override
             public void OnHttpDataError(IOException e) {
-
+                ToastUtil.show(InitActivity.this,e.getMessage());
             }
         });
 
     }
 
     private void toCustomSetting(){
-        sendBroadcast(new Intent(this,SettingActivity.class));
+        startActivity(new Intent(this,SettingActivity.class));
         this.finish();
     }
 

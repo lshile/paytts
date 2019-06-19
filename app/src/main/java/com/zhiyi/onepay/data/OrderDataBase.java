@@ -2,6 +2,7 @@ package com.zhiyi.onepay.data;
 
 import com.zhiyi.onepay.AppConst;
 import com.zhiyi.onepay.util.AppUtil;
+import com.zhiyi.onepay.util.RequestData;
 
 /**
  * Created by Administrator on 2019/5/6.
@@ -25,7 +26,7 @@ public abstract class OrderDataBase {
 
     public abstract String getApiUrl();
 
-    public abstract String getOrderData();
+    public abstract RequestData getOrderData();
 
     public abstract String getLogString();
 }

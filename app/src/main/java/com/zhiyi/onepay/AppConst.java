@@ -13,6 +13,7 @@ public class AppConst {
     public static final String KeyNoticeSecret = "notice_secret";
     public static final String KeyUKFNoticeUrl = "uk_notice_url";
     public static final String KeyUKFNoticeAppId = "uk_notice_appid";
+    public static final String KeyUKFNoticeToken = "uk_notice_token";
     public static final String KeyUKFNoticeSecret = "uk_notice_secret";
     public static final String KeyBoolLog = "b_set_log";
 //    public static final String KeyBoolWx = "b_set_wx";
@@ -76,6 +77,7 @@ public class AppConst {
      * 网络交互KEY
      *  */
     public static final String NetTypeLogin="login";
+    public static final String NetTypeNotify="notify";
 
     public static final String authUrl(String api) {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;

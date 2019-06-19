@@ -14,7 +14,7 @@ public class RequestData extends JSONObject{
     }
     private RequestData(String type){
         try {
-            this.put("type",type);
+            this.put("_type",type);
         } catch (JSONException e) {
             e.printStackTrace();
         }

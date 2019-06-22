@@ -6,6 +6,7 @@ import android.util.Log;
 import com.zhiyi.onepay.AppConst;
 import com.zhiyi.onepay.util.AppUtil;
 import com.zhiyi.onepay.util.RequestData;
+import com.zhiyi.onepay.util.StringUtils;
 
 import org.json.JSONException;
 
@@ -26,7 +27,6 @@ public class MapOrderData extends OrderDataBase{
         map = (HashMap<String, String>) data;
         map.put("time",""+time);
         map.put("rndStr",rndStr);
-        map.put("appid",""+AppConst.AppId);
         payType = map.get("paytype");
         name = map.get("name");
     }
@@ -52,10 +52,13 @@ public class MapOrderData extends OrderDataBase{
             try {
                 for (String key:list) {
                     String value = map.get(key);
+                    if(StringUtils.isEmpty(value)){
+                        continue;
+                    }
                     sb.append(key);
-                    sb.append("=");
+//                    sb.append("=");
                     sb.append(value);
-                    sb.append("&");
+//                    sb.append("&");
                     data.put(key,value);
                 }
                 String tmp = sb.toString();

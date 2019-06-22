@@ -75,6 +75,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         payComp = MediaPlayer.create(this, R.raw.paycomp);
         payNetWorkError = MediaPlayer.create(this, R.raw.networkerror);
         dbManager = new DBManager(this);
+        AppConst.InitParams(dbManager);
         aliReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

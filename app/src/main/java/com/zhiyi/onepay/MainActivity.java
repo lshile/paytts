@@ -44,6 +44,7 @@ import com.zhiyi.onepay.activitys.SettingActivity;
 import com.zhiyi.onepay.consts.ActionName;
 import com.zhiyi.onepay.sms.SmsService;
 import com.zhiyi.onepay.util.DBManager;
+import com.zhiyi.onepay.util.RequestData;
 import com.zhiyi.onepay.util.RequestUtils;
 import com.zhiyi.onepay.util.ToastUtil;
 
@@ -111,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
             builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    RequestUtils.getRequest(AppConst.authUrl("person/Merchant/delBindCode"),new IHttpResponse() {
+                    RequestData post  = RequestData.newInstance(AppConst.NetTypeUnBindCode);
+                    RequestUtils.post(AppConst.NoticeUrl,post,new IHttpResponse() {
 
                         @Override
                         public void OnHttpData(String data) {
@@ -152,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
 
         textView = (TextView)findViewById(R.id.textView_Help);
         dbm = new DBManager(this);
-        InitNoticeParam();
         //
         swt_mute.setChecked(!AppConst.PlaySounds);
         //
@@ -265,17 +266,7 @@ public class MainActivity extends AppCompatActivity {
         checkStatus();
     }
 
-    private void InitNoticeParam() {
-        //通知url
-        String noticeUrlStr = dbm.getConfig(AppConst.KeyNoticeUrl);
-        AppConst.NoticeUrl = TextUtils.isEmpty(noticeUrlStr) ? AppConst.HostUrl+"person/notify/pay" :noticeUrlStr;
-        //通知appid
-        String noticeAppIdStr = dbm.getConfig(AppConst.KeyNoticeAppId);
-        AppConst.NoticeAppId =TextUtils.isEmpty(noticeAppIdStr)? AppConst.AppId : Integer.parseInt(noticeAppIdStr);
-        //通知密钥
-        String noticeSecretStr = dbm.getConfig(AppConst.KeyNoticeSecret);
-        AppConst.NoticeSecret = TextUtils.isEmpty(noticeSecretStr) ? AppConst.Secret : noticeSecretStr;
-    }
+
 
     @Override
     protected void onResume() {
@@ -292,32 +283,27 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bindcode:
-                ToastUtil.show(this,"开源版本已去除服务器支持.请直接填写自己的服务器地址和参数");
-                break;
-                //不在绑定服务器.
-//                RequestUtils.getRequest(AppConst.authUrl("person/Merchant/addBindCode"), new IHttpResponse() {
-//                    @Override
-//                    public void OnHttpData(String data) {
-//                        try{
-//                            JSONObject json = new JSONObject(data);
-//                            String code = ""+json.getJSONObject("data").getInt("bind_code");
-//                            Message msg = new Message();
-//                            msg.what = 1;
-//                            msg.obj = code;
-//                            MainActivity.this.handler.sendMessage(msg);
-//                        }
-//                        catch (JSONException je){
-//                                Log.i("yyk","msg === "+je.getMessage());
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void OnHttpDataError(IOException e) {
-//
-//                    }
-//                });
+//                ToastUtil.show(this,"开源版本已去除服务器支持.请直接填写自己的服务器地址和参数");
 //                break;
+//                不在绑定服务器.
+                RequestData post = RequestData.newInstance(AppConst.NetTypeBindCode);
+                RequestUtils.post(AppConst.NoticeUrl,post, new HttpJsonResponse() {
+
+                    @Override
+                    protected void onJsonResponse(JSONObject data) {
+                        String code = null;
+                        try {
+                            code = ""+data.getInt("bind_code");
+                        } catch (JSONException e) {
+                        }
+                        Message msg = new Message();
+                        msg.what = 1;
+                        msg.obj = code;
+                        MainActivity.this.handler.sendMessage(msg);
+                    }
+
+                });
+                break;
             case R.id.action_setting:
                 OpenSetting();
                 break;

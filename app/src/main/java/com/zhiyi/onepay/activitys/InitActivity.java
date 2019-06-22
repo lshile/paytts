@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,11 +15,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.zhiyi.onepay.AppConst;
+import com.zhiyi.onepay.HttpJsonResponse;
 import com.zhiyi.onepay.IHttpResponse;
 import com.zhiyi.onepay.MainActivity;
 import com.zhiyi.onepay.R;
 import com.zhiyi.onepay.util.AppUtil;
 import com.zhiyi.onepay.util.DBManager;
+import com.zhiyi.onepay.util.LogUtil;
 import com.zhiyi.onepay.util.RequestData;
 import com.zhiyi.onepay.util.RequestUtils;
 import com.zhiyi.onepay.util.StringUtils;
@@ -38,11 +41,17 @@ public class InitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_init);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        dbm = new DBManager(this);
+
+        InitNoticeParam();
         String url = "http://faka.ukafu.com/notify_api";//dbm.getConfig(AppConst.KeyUKFNoticeUrl);
         if(!StringUtils.isEmpty(url)){
             EditText editText = findViewById(R.id.edit_apiurl);
             editText.setText(url);
+        }
+        String appid = ""+AppConst.AppId;
+        if(!StringUtils.isEmpty(appid)){
+            EditText editText = findViewById(R.id.edit_appid);
+            editText.setText(appid);
         }
         Button btn_ok = findViewById(R.id.button_ok);
         btn_ok.setOnClickListener(new View.OnClickListener() {
@@ -82,16 +91,14 @@ public class InitActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        RequestUtils.post(url, post, new IHttpResponse() {
-            @Override
-            public void OnHttpData(String data) {
+        AppConst.NoticeUrl = url;
+        RequestUtils.post(url, post, new HttpJsonResponse() {
+            protected void onJsonResponse(JSONObject jsonObject) {
                 try {
-                    JSONObject jsonObject = new JSONObject(data);
-
                     if(jsonObject.has(AppConst.KeyAppId)){
                         AppConst.AppId = jsonObject.getInt(AppConst.KeyAppId);
                         dbm.setConfig(AppConst.KeyUKFNoticeAppId,""+AppConst.AppId);
+                        LogUtil.e("appid:"+AppConst.AppId);
                     }
                     if(jsonObject.has(AppConst.KeyToken)){
                         AppConst.Token = jsonObject.getString(AppConst.KeyToken);
@@ -102,18 +109,18 @@ public class InitActivity extends AppCompatActivity {
                         dbm.setConfig(AppConst.KeyUKFNoticeSecret,AppConst.Secret);
                     }
                 } catch (JSONException e) {
-                    Log.e(AppConst.TAG_LOG,"login error",e);
+                    LogUtil.e("login error",e);
                 }
                 startActivity(new Intent(InitActivity.this,MainActivity.class));
                 InitActivity.this.finish();
             }
-
-            @Override
-            public void OnHttpDataError(IOException e) {
-                ToastUtil.show(InitActivity.this,e.getMessage());
-            }
         });
 
+    }
+
+    private void InitNoticeParam() {
+        dbm = new DBManager(this);
+        AppConst.InitParams(dbm);
     }
 
     private void toCustomSetting(){

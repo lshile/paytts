@@ -120,7 +120,6 @@
                     android:layout_weight="1"
                     android:background="@android:color/holo_green_dark"
                     android:text="@string/action_qrcode"
-                    android:visibility="invisible"
                     android:textStyle="bold" />
 
 
@@ -135,9 +134,8 @@
 使用帮助:
 1 开启服务权限;
 2 上传二维码;
-3 获取商户密钥;
-4 打开微信/支付宝的收款通知,(语音播报);
-5 设置APP权限,自启动,允许后台运行,黑屏不断网,省电模式下白名单 等,总之.让APP能一直联网,不被系统杀死"
+3 打开微信/支付宝的收款通知,(语音播报);
+4 设置APP权限,自启动,允许后台运行,黑屏不断网,省电模式下白名单 等,总之.让APP能一直联网,不被系统杀死"
                 android:textAlignment="viewStart" />
 
             <TextView

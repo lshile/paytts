@@ -1,5 +1,9 @@
 package com.zhiyi.onepay;
 
+import android.text.TextUtils;
+
+import com.zhiyi.onepay.util.DBManager;
+
 /**
  * Created by Administrator on 2018/8/6.
  */
@@ -8,6 +12,7 @@ public class AppConst {
     public static final String KeyAppId = "appid";
     public static final String KeyToken = "token";
     public static final String KeySecret = "secret";
+    public static final String KeyIsCustom = "is_custom";
     public static final String KeyNoticeUrl = "notice_url";
     public static final String KeyNoticeAppId = "notice_appid";
     public static final String KeyNoticeSecret = "notice_secret";
@@ -78,9 +83,28 @@ public class AppConst {
      *  */
     public static final String NetTypeLogin="login";
     public static final String NetTypeNotify="notify";
+    public static final String NetTypeBindCode="bindCode";
+    public static final String NetTypeUnBindCode="unbindCode";
 
     public static final String authUrl(String api) {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;
+    }
+
+    public static void InitParams(DBManager dbm){
+        String custom = dbm.getConfig(AppConst.KeyIsCustom);
+        if("custom".equals(custom)){
+            //自定义选项
+        }else{
+            //通知url
+            String noticeUrlStr = dbm.getConfig(AppConst.KeyUKFNoticeUrl);
+            AppConst.NoticeUrl = TextUtils.isEmpty(noticeUrlStr) ? AppConst.HostUrl+"person/notify/pay" :noticeUrlStr;
+            //通知appid
+            String noticeAppIdStr = dbm.getConfig(AppConst.KeyUKFNoticeAppId);
+            AppConst.AppId =TextUtils.isEmpty(noticeAppIdStr)? 0 : Integer.parseInt(noticeAppIdStr);
+            //通知密钥
+            String noticeSecretStr = dbm.getConfig(AppConst.KeyUKFNoticeSecret);
+            AppConst.Secret = TextUtils.isEmpty(noticeSecretStr) ? "" : noticeSecretStr;
+        }
     }
 
 }

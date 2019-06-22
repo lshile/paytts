@@ -116,7 +116,7 @@ public class RequestUtils {
             client.setReadTimeout(5,TimeUnit.SECONDS);
             client.setWriteTimeout(5,TimeUnit.SECONDS);
         }
-        Log.i("ZYKJ","request: "+url);
+        LogUtil.i(url+"=>"+data);
         RequestBody body = new RequestBody() {
             @Override
             public MediaType contentType() {

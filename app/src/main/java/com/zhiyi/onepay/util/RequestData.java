@@ -1,5 +1,7 @@
 package com.zhiyi.onepay.util;
 
+import com.zhiyi.onepay.AppConst;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,6 +17,8 @@ public class RequestData extends JSONObject{
     private RequestData(String type){
         try {
             this.put("_type",type);
+            this.put("_appid", AppConst.AppId);
+            this.put("_token", AppConst.Token);
         } catch (JSONException e) {
             e.printStackTrace();
         }

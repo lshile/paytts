@@ -39,22 +39,23 @@ import java.util.regex.Pattern;
 public class QrcodeUploadActivity extends AppCompatActivity {
     private EditText eMoney;
     private EditText eName;
-//    private EditText txt_url;
+    private EditText txt_url;
     private Button upButton;
     private String qrcode;
     private String currentPhotoString;
-//    private ImageClient imageClient;
+    private Handler handler;
+    //    private ImageClient imageClient;
 //    private QrCodeData qrData;
-//    private Handler handler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        handler = new Handler();
-//        txt_url = findViewById(R.id.txt_url);
+        handler = new Handler();
         setContentView(R.layout.activity_qrcode_upload);
         Intent intent = getIntent();
         currentPhotoString = intent.getStringExtra("file");
+        txt_url = findViewById(R.id.txt_url);
         ImageView img = findViewById(R.id.image_view);
         img.setImageURI(Uri.fromFile(new File(currentPhotoString)));
         eMoney = findViewById(R.id.txt_money);
@@ -153,7 +154,7 @@ public class QrcodeUploadActivity extends AppCompatActivity {
         CodeUtils.analyzeBitmap(currentPhotoString, new CodeUtils.AnalyzeCallback() {
             @Override
             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
-                readTxt(currentPhotoString, result);
+                readTxt(result);
             }
 
             @Override
@@ -164,7 +165,7 @@ public class QrcodeUploadActivity extends AppCompatActivity {
 
     }
 
-    private void readTxt(final String file, final String url) {
+    private void readTxt(final String url) {
 //服务器识别类型.客户端获取二维码足以
 //        if (url.toUpperCase().startsWith("WXP://")) {
 //            type = QrCodeData.TYPE_WX;
@@ -178,6 +179,17 @@ public class QrcodeUploadActivity extends AppCompatActivity {
 //            return;
 //        }
         qrcode = url;
+        if(StringUtils.isEmpty(url)){
+            Toast.makeText(this, "无法识别二维码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                txt_url.setText(qrcode);
+            }
+        };
+        handler.post(runnable);
         //文字识别,取消,没钱,API要钱
         // Android 4.0 之后不能在主线程中请求HTTP请求
 //        new Thread(new Runnable() {

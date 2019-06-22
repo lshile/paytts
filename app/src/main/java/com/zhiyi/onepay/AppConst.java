@@ -83,8 +83,10 @@ public class AppConst {
      *  */
     public static final String NetTypeLogin="login";
     public static final String NetTypeNotify="notify";
+    //app绑定
     public static final String NetTypeBindCode="bindCode";
     public static final String NetTypeUnBindCode="unbindCode";
+    //二维码上传,获取
     public static final String NetTypeQrcodeList="qrList";
     public static final String NetTypeQrcodeUpload="qrUpload";
 

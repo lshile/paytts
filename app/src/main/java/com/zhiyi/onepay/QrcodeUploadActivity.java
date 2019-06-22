@@ -20,7 +20,10 @@ import com.qcloud.image.ImageClient;
 import com.qcloud.image.request.GeneralOcrRequest;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.zhiyi.onepay.data.QrCodeData;
+import com.zhiyi.onepay.util.LogUtil;
+import com.zhiyi.onepay.util.RequestData;
 import com.zhiyi.onepay.util.RequestUtils;
+import com.zhiyi.onepay.util.StringUtils;
 import com.zhiyi.onepay.util.ToastUtil;
 
 import org.json.JSONArray;
@@ -34,21 +37,21 @@ import java.util.regex.Pattern;
 
 
 public class QrcodeUploadActivity extends AppCompatActivity {
-    private static String LOG_TAG = "ZYKJ";
     private EditText eMoney;
     private EditText eName;
-    private EditText txt_url;
+//    private EditText txt_url;
     private Button upButton;
     private String qrcode;
     private String currentPhotoString;
-    private ImageClient imageClient;
-    private QrCodeData qrData;
-    private Handler handler;
+//    private ImageClient imageClient;
+//    private QrCodeData qrData;
+//    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        handler = new Handler();
+//        handler = new Handler();
+//        txt_url = findViewById(R.id.txt_url);
         setContentView(R.layout.activity_qrcode_upload);
         Intent intent = getIntent();
         currentPhotoString = intent.getStringExtra("file");
@@ -56,7 +59,6 @@ public class QrcodeUploadActivity extends AppCompatActivity {
         img.setImageURI(Uri.fromFile(new File(currentPhotoString)));
         eMoney = findViewById(R.id.txt_money);
         eName = findViewById(R.id.txt_name);
-        txt_url = findViewById(R.id.txt_url);
         upButton = findViewById(R.id.btn_upload);
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,29 +80,31 @@ public class QrcodeUploadActivity extends AppCompatActivity {
             ToastUtil.show(QrcodeUploadActivity.this,"金额未知");
             return;
         }
-        RequestUtils.getRequest(AppConst.authUrl("person/qrcode/upload") + "&money=" + money + "&name=" + name + "&code=" + qrcode, new IHttpResponse() {
-            @Override
-            public void OnHttpData(String data) {
-                //数据是使用Intent返回
-
-                Intent intent = new Intent();
-
-                //把返回数据存入Intent
-
-                intent.putExtra("result", data);
-
-                //设置返回数据
-
-                setResult(RESULT_OK, intent);
-
-                //关闭Activity
-
-                finish();
+        try{
+            Float.parseFloat(money);
+        }catch (NumberFormatException e){
+            LogUtil.e("数字格式不对,"+money);
+            return;
+        }
+        RequestData post = RequestData.newInstance(AppConst.NetTypeQrcodeUpload);
+        try {
+            if(!StringUtils.isEmpty(name)){
+                post.put("name",name);
             }
-
+            post.put("money",money);
+            post.put("code",qrcode);
+        } catch (JSONException e) {
+        }
+        RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
             @Override
-            public void OnHttpDataError(IOException e) {
-                ToastUtil.show(QrcodeUploadActivity.this,"上传失败"+e.getMessage());
+            protected void onJsonResponse(JSONObject data) {
+                Intent intent = new Intent();
+                //把返回数据存入Intent
+                intent.putExtra("result", data.toString());
+                //设置返回数据
+                setResult(RESULT_OK, intent);
+                //关闭Activity
+                finish();
             }
         });
     }
@@ -108,7 +112,7 @@ public class QrcodeUploadActivity extends AppCompatActivity {
     private void loadImage(){
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoString);
         if (bitmap == null) {
-            Log.w(LOG_TAG, "bitmap is null" + currentPhotoString);
+            LogUtil.e("bitmap is null" + currentPhotoString);
             String[] mPermissionList = new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -161,141 +165,141 @@ public class QrcodeUploadActivity extends AppCompatActivity {
     }
 
     private void readTxt(final String file, final String url) {
-        final int type;
-
-        if (url.toUpperCase().startsWith("WXP://")) {
-            type = QrCodeData.TYPE_WX;
-        } else if (url.toUpperCase().startsWith("HTTPS://QR.ALIPAY.COM")) {
-            type = QrCodeData.TYPE_ALI;
-        }else if(url.toLowerCase().startsWith("https://nxt.nongxinyin.com")){
-            type = QrCodeData.TYPE_JXYMF;
-        } else {
-            Log.w(LOG_TAG, "qrcode is not enable");
-            Toast.makeText(this, "不支持选择的二维码,请选择支付宝/微信收款码", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//服务器识别类型.客户端获取二维码足以
+//        if (url.toUpperCase().startsWith("WXP://")) {
+//            type = QrCodeData.TYPE_WX;
+//        } else if (url.toUpperCase().startsWith("HTTPS://QR.ALIPAY.COM")) {
+//            type = QrCodeData.TYPE_ALI;
+//        }else if(url.toLowerCase().startsWith("https://nxt.nongxinyin.com")){
+//            type = QrCodeData.TYPE_JXYMF;
+//        } else {
+//            Log.w(LOG_TAG, "qrcode is not enable");
+//            Toast.makeText(this, "不支持选择的二维码,请选择支付宝/微信收款码", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         qrcode = url;
+        //文字识别,取消,没钱,API要钱
         // Android 4.0 之后不能在主线程中请求HTTP请求
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                qrData = new QrCodeData();
-                qrData.money = "0";
-                qrData.name = "";
-                do {
-                    String bucketName = "qrcode-1252008836";
-                    if (imageClient == null) {
-                        String appId = "1252008836";
-                        String secretId = "AKIDUJ5ZBdw7MivIfx7C82mLFe9aEiJksLxX";
-                        String secretKey = "BB0ra9oOEwcOaeXdbTAg4LRMXouqgT6Y";
-                        imageClient = new ImageClient(appId, secretId, secretKey, ImageClient.NEW_DOMAIN_recognition_image_myqcloud_com);
-                    }
-                    File tagImage;
-                    try {
-                        tagImage = new File(file);
-                    } catch (Exception ex) {
-                        Log.w(LOG_TAG, ex);
-                        break;
-                    }
-
-                    GeneralOcrRequest tagReq = new GeneralOcrRequest(bucketName, tagImage);
-
-                    String ret = imageClient.generalOcr(tagReq);
-                    try {
-                        JSONObject jsonObject = new JSONObject(ret);
-                        int code = jsonObject.getInt("code");
-                        if (code != 0) {
-                            Log.w(LOG_TAG, "image ORC code is " + code);
-                            Log.w(LOG_TAG, ret);
-                            break;
-                        }
-                        if (!jsonObject.has("data")) {
-                            Log.w(LOG_TAG, "image ORC no data ");
-                            break;
-                        }
-                        JSONArray array = jsonObject.getJSONObject("data").getJSONArray("items");
-                        if (array == null) {
-                            Log.w(LOG_TAG, "image ORC no items ");
-                            break;
-                        }
-                        Pattern pMoney = Pattern.compile("￥([\\d\\.]+)");
-                        if (type == QrCodeData.TYPE_WX) {
-                            Pattern pWeixinNick = Pattern.compile("(\\S+)\\(\\*");
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject item = array.getJSONObject(i);
-                                if (item.has("itemstring")) {
-                                    String value = item.getString("itemstring");
-                                    Matcher m = pMoney.matcher(value);
-                                    if (m.find()) {
-                                        qrData.money = m.group(1);
-                                        continue;
-                                    }
-                                    m = pWeixinNick.matcher(value);
-                                    if (m.find()) {
-                                        qrData.name = m.group(1);
-                                        continue;
-                                    }
-                                }
-                            }
-                        } else if (type == QrCodeData.TYPE_ALI) {
-                            Pattern aliNick = Pattern.compile("支付宝|LIPAY");
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject item = array.getJSONObject(i);
-                                if (item.has("itemstring")) {
-                                    String value = item.getString("itemstring");
-                                    Matcher m = pMoney.matcher(value);
-                                    if (m.find()) {
-                                        qrData.money = m.group(1);
-                                        continue;
-                                    }
-                                    m = aliNick.matcher(value);
-                                    if (m.find()) {
-                                        continue;
-                                    } else {
-                                        qrData.name = value;
-                                    }
-                                }
-                            }
-                        }else if(type == QrCodeData.TYPE_JXYMF){
-                            Pattern aliNick = Pattern.compile("订单金额");
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject item = array.getJSONObject(i);
-                                if (item.has("itemstring")) {
-                                    String value = item.getString("itemstring");
-                                    Matcher m = pMoney.matcher(value);
-                                    if (m.find()) {
-                                        qrData.money = m.group(1);
-                                        continue;
-                                    }
-                                    m = aliNick.matcher(value);
-                                    if (m.find()) {
-                                        continue;
-                                    } else {
-                                        qrData.name = value;
-                                    }
-                                }
-                            }
-                        }
-                        if (!qrData.name.matches("^\\S+$")) {
-                            qrData.name = "";
-                        }
-                        qrData.type = type;
-                    } catch (JSONException e) {
-                        Log.w(LOG_TAG, e);
-                    }
-                    Log.i(LOG_TAG, qrData.money + qrData.name);
-                }while (false);
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        eMoney.setText(qrData.money);
-                        if(!qrData.name.isEmpty()){
-                            eName.setText(qrData.name);
-                        }
-                    }
-                };
-                handler.post(runnable);
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                qrData = new QrCodeData();
+//                qrData.money = "0";
+//                qrData.name = "";
+//                do {
+//                    String bucketName = "qrcode-1252008836";
+//                    if (imageClient == null) {
+//                        String appId = "1252008836";
+//                        String secretId = "AKIDUJ5ZBdw7MivIfx7C82mLFe9aEiJksLxX";
+//                        String secretKey = "BB0ra9oOEwcOaeXdbTAg4LRMXouqgT6Y";
+//                        imageClient = new ImageClient(appId, secretId, secretKey, ImageClient.NEW_DOMAIN_recognition_image_myqcloud_com);
+//                    }
+//                    File tagImage;
+//                    try {
+//                        tagImage = new File(file);
+//                    } catch (Exception ex) {
+//                        Log.w(LOG_TAG, ex);
+//                        break;
+//                    }
+//
+//                    GeneralOcrRequest tagReq = new GeneralOcrRequest(bucketName, tagImage);
+//
+//                    String ret = imageClient.generalOcr(tagReq);
+//                    try {
+//                        JSONObject jsonObject = new JSONObject(ret);
+//                        int code = jsonObject.getInt("code");
+//                        if (code != 0) {
+//                            Log.w(LOG_TAG, "image ORC code is " + code);
+//                            Log.w(LOG_TAG, ret);
+//                            break;
+//                        }
+//                        if (!jsonObject.has("data")) {
+//                            Log.w(LOG_TAG, "image ORC no data ");
+//                            break;
+//                        }
+//                        JSONArray array = jsonObject.getJSONObject("data").getJSONArray("items");
+//                        if (array == null) {
+//                            Log.w(LOG_TAG, "image ORC no items ");
+//                            break;
+//                        }
+//                        Pattern pMoney = Pattern.compile("￥([\\d\\.]+)");
+//                        if (type == QrCodeData.TYPE_WX) {
+//                            Pattern pWeixinNick = Pattern.compile("(\\S+)\\(\\*");
+//                            for (int i = 0; i < array.length(); i++) {
+//                                JSONObject item = array.getJSONObject(i);
+//                                if (item.has("itemstring")) {
+//                                    String value = item.getString("itemstring");
+//                                    Matcher m = pMoney.matcher(value);
+//                                    if (m.find()) {
+//                                        qrData.money = m.group(1);
+//                                        continue;
+//                                    }
+//                                    m = pWeixinNick.matcher(value);
+//                                    if (m.find()) {
+//                                        qrData.name = m.group(1);
+//                                        continue;
+//                                    }
+//                                }
+//                            }
+//                        } else if (type == QrCodeData.TYPE_ALI) {
+//                            Pattern aliNick = Pattern.compile("支付宝|LIPAY");
+//                            for (int i = 0; i < array.length(); i++) {
+//                                JSONObject item = array.getJSONObject(i);
+//                                if (item.has("itemstring")) {
+//                                    String value = item.getString("itemstring");
+//                                    Matcher m = pMoney.matcher(value);
+//                                    if (m.find()) {
+//                                        qrData.money = m.group(1);
+//                                        continue;
+//                                    }
+//                                    m = aliNick.matcher(value);
+//                                    if (m.find()) {
+//                                        continue;
+//                                    } else {
+//                                        qrData.name = value;
+//                                    }
+//                                }
+//                            }
+//                        }else if(type == QrCodeData.TYPE_JXYMF){
+//                            Pattern aliNick = Pattern.compile("订单金额");
+//                            for (int i = 0; i < array.length(); i++) {
+//                                JSONObject item = array.getJSONObject(i);
+//                                if (item.has("itemstring")) {
+//                                    String value = item.getString("itemstring");
+//                                    Matcher m = pMoney.matcher(value);
+//                                    if (m.find()) {
+//                                        qrData.money = m.group(1);
+//                                        continue;
+//                                    }
+//                                    m = aliNick.matcher(value);
+//                                    if (m.find()) {
+//                                        continue;
+//                                    } else {
+//                                        qrData.name = value;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        if (!qrData.name.matches("^\\S+$")) {
+//                            qrData.name = "";
+//                        }
+//                        qrData.type = type;
+//                    } catch (JSONException e) {
+//                        Log.w(LOG_TAG, e);
+//                    }
+//                    Log.i(LOG_TAG, qrData.money + qrData.name);
+//                }while (false);
+//                Runnable runnable = new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        eMoney.setText(qrData.money);
+//                        if(!qrData.name.isEmpty()){
+//                            eName.setText(qrData.name);
+//                        }
+//                    }
+//                };
+//                handler.post(runnable);
+//            }
+//        }).start();
     }
 }

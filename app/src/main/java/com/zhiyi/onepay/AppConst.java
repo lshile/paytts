@@ -85,6 +85,8 @@ public class AppConst {
     public static final String NetTypeNotify="notify";
     public static final String NetTypeBindCode="bindCode";
     public static final String NetTypeUnBindCode="unbindCode";
+    public static final String NetTypeQrcodeList="qrList";
+    public static final String NetTypeQrcodeUpload="qrUpload";
 
     public static final String authUrl(String api) {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;

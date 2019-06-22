@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhiyi.onepay.data.QrCodeData;
+import com.zhiyi.onepay.util.RequestData;
 import com.zhiyi.onepay.util.RequestUtils;
 import com.zhiyi.onepay.util.SystemProgramUtils;
 import com.zhiyi.onepay.util.ToastUtil;
@@ -70,16 +71,11 @@ public class QrcodeActivity extends AppCompatActivity {
         handler = new Handler();
 
         findViewById(R.id.dummy_button).setOnClickListener(readClick);
-
-        RequestUtils.getRequest(AppConst.authUrl("person/qrcode/index"), new IHttpResponse() {
+        RequestData post = RequestData.newInstance(AppConst.NetTypeQrcodeList);
+        RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
             @Override
-            public void OnHttpData(String data) {
-                handleMessage(data, ARG_TYPE_QRCODELIST);
-            }
-
-            @Override
-            public void OnHttpDataError(IOException e) {
-
+            protected void onJsonResponse(JSONObject data) {
+                handleMessage(data.toString(), ARG_TYPE_QRCODELIST);
             }
         });
 
@@ -184,35 +180,23 @@ public class QrcodeActivity extends AppCompatActivity {
             public void run() {
                 try {
                     if (arg1 == ARG_TYPE_QRCODELIST) {
-
                         JSONObject obj = new JSONObject(msg);
-                        if (obj.getInt("code") == 0) {
-                            JSONArray list = obj.getJSONArray("data");
-                            int[] colors = new int[]{R.color.colorPrimary, R.color.colorPrimaryDark};
-                            if (list != null && list.length() > 0) {
-                                int flag = 0;
-                                for (int i = 0; i < list.length(); i++) {
-                                    View view = addViewItem(list.getJSONObject(i));
-                                    if (view != null) {
-                                        if (Build.VERSION.SDK_INT > 22) {
-                                            view.setBackgroundColor(getResources().getColor(colors[++flag % 2], getTheme()));
-                                        }
+                        JSONArray list = obj.getJSONArray("list");
+                        int[] colors = new int[]{R.color.colorPrimary, R.color.colorPrimaryDark};
+                        if (list != null && list.length() > 0) {
+                            int flag = 0;
+                            for (int i = 0; i < list.length(); i++) {
+                                View view = addViewItem(list.getJSONObject(i));
+                                if (view != null) {
+                                    if (Build.VERSION.SDK_INT > 22) {
+                                        view.setBackgroundColor(getResources().getColor(colors[++flag % 2], getTheme()));
                                     }
                                 }
                             }
-
-                        } else {
-                            ToastUtil.show(QrcodeActivity.this, obj.getString("msg"));
                         }
                     } else if (arg1 == ARG_TYPE_ADD) {
                         JSONObject obj = new JSONObject(msg);
-                        if (obj.getInt("code") == 0) {
-                            JSONObject data = obj.getJSONObject("data");
-                            updateView(data);
-                        } else {
-                            ToastUtil.show(QrcodeActivity.this, obj.getString("msg"));
-                        }
-
+                        updateView(obj);
                     }
                 } catch (JSONException e) {
                     Log.w("ZYKJ",e.getMessage());

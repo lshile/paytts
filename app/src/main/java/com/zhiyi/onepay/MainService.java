@@ -1,7 +1,7 @@
 /**
- *  个人收款 https://gitee.com/DaLianZhiYiKeJi/xpay
- *  大连致一科技有限公司
- * */
+ * 个人收款 https://gitee.com/DaLianZhiYiKeJi/xpay
+ * 大连致一科技有限公司
+ */
 
 
 package com.zhiyi.onepay;
@@ -32,6 +32,8 @@ import com.zhiyi.onepay.data.OrderDataBase;
 import com.zhiyi.onepay.sms.SmsService;
 import com.zhiyi.onepay.util.AppUtil;
 import com.zhiyi.onepay.util.DBManager;
+import com.zhiyi.onepay.util.LogUtil;
+import com.zhiyi.onepay.util.RequestData;
 import com.zhiyi.onepay.util.RequestUtils;
 
 import org.json.JSONException;
@@ -44,7 +46,7 @@ import java.util.ArrayList;
 /**
  * 后台进程.确保进入后台也在运行
  */
-public class MainService extends Service implements Runnable, MediaPlayer.OnCompletionListener{
+public class MainService extends Service implements Runnable, MediaPlayer.OnCompletionListener {
     private Handler handler;
     private IMessageHander msgHander;
     private MediaPlayer payComp;
@@ -54,19 +56,20 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     private DBManager dbManager;
     private PowerManager.WakeLock wakeLock;
     private BroadcastReceiver aliReceiver;
-//    public static final  String CHANNEL_ID          = "zhi_yi_px_pay";
+    //    public static final  String CHANNEL_ID          = "zhi_yi_px_pay";
     private NotificationChannel mNotificationChannel;
     private SmsService smsService;
+
     @Override
     public void onCreate() {
         super.onCreate();
         AppConst.version = AppUtil.getVersionCode(this);
         sendingList = new ArrayList<>();
         Log.i("ZYKJ", "mainactivity");
-        handler = new Handler(getMainLooper()){
+        handler = new Handler(getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                if(msgHander!=null){
+                if (msgHander != null) {
                     msgHander.handMessage(msg);
                 }
             }
@@ -79,40 +82,40 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         aliReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                receiveBroadcast(context,intent);
+                receiveBroadcast(context, intent);
             }
         };
         IntentFilter filter = new IntentFilter();
         filter.addAction(ActionName.ONORDER_REC);
         filter.addAction(ActionName.ONORDER_NOTIFY);
         filter.addAction(ActionName.StartSMS);
-        registerReceiver(aliReceiver,filter);
+        registerReceiver(aliReceiver, filter);
 
-        new Thread(this,"MainService").start();
+        new Thread(this, "MainService").start();
         //保持黑屏状态执行
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, MainService.class.getName());
-        if(wakeLock!=null){
+        if (wakeLock != null) {
             wakeLock.acquire();
-        }else{
-            Log.w(AppConst.TAG_LOG,"wakeLock is null");
+        } else {
+            Log.w(AppConst.TAG_LOG, "wakeLock is null");
         }
         //声音播放也不成功
         payComp = MediaPlayer.create(this, R.raw.paycomp);
         payComp.setOnCompletionListener(this);
         //
-        Log.i("ZYKJ","MainService Start");
-        NotificationManager mNM =(NotificationManager)getSystemService(Service.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        Log.i("ZYKJ", "MainService Start");
+        NotificationManager mNM = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mNotificationChannel = new NotificationChannel(AppConst.CHANNEL_Front, getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
             mNotificationChannel.setDescription(getString(R.string.app_desc));
             mNM.createNotificationChannel(mNotificationChannel);
         }
-        NotificationCompat.Builder nb = new NotificationCompat.Builder(this,AppConst.CHANNEL_Front);//
+        NotificationCompat.Builder nb = new NotificationCompat.Builder(this, AppConst.CHANNEL_Front);//
         nb.setContentTitle(getString(R.string.app_desc)).setTicker(getString(R.string.app_desc2)).setSmallIcon(R.mipmap.ic_launcher);
         nb.setWhen(System.currentTimeMillis());
         Notification notification = nb.build();
-        startForeground(1,notification);
+        startForeground(1, notification);
 
 
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -120,7 +123,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         registerReceiver(batteryReceiver, intentFilter);
 
         smsService = new SmsService();
-        Log.i("ZYKJ","MainService Started");
+        Log.i("ZYKJ", "MainService Started");
     }
 
     @Override
@@ -135,7 +138,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         return START_STICKY;
     }
 
-    public void setMessageHander(IMessageHander hander){
+    public void setMessageHander(IMessageHander hander) {
         msgHander = hander;
     }
 
@@ -145,8 +148,8 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     }
 
     public void receiveBroadcast(Context context, Intent intent) {
-        String  action = intent.getAction();
-        switch (action){
+        String action = intent.getAction();
+        switch (action) {
             case ActionName.StartSMS:
                 smsService.registerSMSObserver(this);
                 break;
@@ -154,15 +157,15 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                 smsService.registerSMSObserver(this);
                 break;
             case ActionName.ONORDER_REC:
-                postMethod(intent,false);
+                postMethod(intent, false);
                 break;
             case ActionName.ONORDER_NOTIFY:
-                postMethod(intent,true);
+                postMethod(intent, true);
                 break;
         }
     }
 
-    class MyBinder extends Binder{
+    class MyBinder extends Binder {
         public MainService getService() {
             return MainService.this;
         }
@@ -180,7 +183,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
 //            msg.what = 1;
 //            msg.obj = "time";
 //            handler.sendMessage(msg);
-           //发送在线通知,保持让系统时时刻刻直到app在线
+        //发送在线通知,保持让系统时时刻刻直到app在线
 //            RequestUtils.getRequest(AppConst.authUrl("person/active/app?version="+getApplicationContext().getApplicationInfo()),handler);
 //       }
 
@@ -190,9 +193,9 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
             } catch (InterruptedException e) {
                 Log.e(AppConst.TAG_LOG, "service thread", e);
             }
-            if(!sendingList.isEmpty()) {
+            if (!sendingList.isEmpty()) {
                 OrderDataBase data;
-                synchronized (sendingList){
+                synchronized (sendingList) {
                     data = sendingList.remove(0);
                 }
                 postMethod(data);
@@ -200,18 +203,18 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
             long now = System.currentTimeMillis();
             do {
                 //10秒内有交互,取消
-                if (now - lastNetTime < 10000) {
-                    Log.d(AppConst.TAG_LOG, "10秒内有交互");
+                if (now - lastResponseTime < 20000) {
+                    Log.d(AppConst.TAG_LOG, "20秒内有交互");
                     break;
                 }
                 //发送在线通知,保持让系统时时刻刻直到app在线,5秒发送一次
-                if (now - lastSendTime < 5000) {
-                    Log.d(AppConst.TAG_LOG, "5秒内有交互");
+                if (now - lastSendTime < 10000) {
+                    Log.d(AppConst.TAG_LOG, "10秒内有交互");
                     break;
                 }
                 postState();
                 //20秒,没消息了.提示网络异常
-                if (now - lastNetTime > 20000) {
+                if (now - lastResponseTime > 20000) {
                     playMedia(payNetWorkError);
                 }
             } while (false);
@@ -236,10 +239,10 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                 sendingList.add(data);
             }
         };
-        if(data.isPost()){
-            RequestUtils.post(data.getApiUrl(),data.getOrderData(),response);
-        }else{
-            RequestUtils.getRequest(data.getApiUrl(),response);
+        if (data.isPost()) {
+            RequestUtils.post(data.getApiUrl(), data.getOrderData(), response);
+        } else {
+            RequestUtils.getRequest(data.getApiUrl(), response);
         }
     }
 
@@ -247,11 +250,11 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     /**
      * 获取道的支付通知发送到服务器
      */
-    private void postMethod(Intent intent,boolean map) {
+    private void postMethod(Intent intent, boolean map) {
         OrderDataBase data;
-        if(map){
+        if (map) {
             data = new MapOrderData(intent);
-        }else{
+        } else {
             data = new OrderData(intent);
         }
         dbManager.addLog(data.getLogString(), 101);
@@ -259,43 +262,23 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         postMethod(data);
     }
 
-    private long lastNetTime;
 
     public boolean handleMessage(String message, int arg1) {
-        lastNetTime = System.currentTimeMillis();
+        lastResponseTime = System.currentTimeMillis();
         if (message == null || message.isEmpty()) {
             return true;
         }
         String msg = message;
         Log.i(AppConst.TAG_LOG, msg);
-        JSONObject json;
-        try {
-            json = new JSONObject(msg);
-
-            if (json.getInt("code") != 0) {
-                String emsg = json.getString("msg");
-                Log.w(AppConst.TAG_LOG, emsg);
-                return false;
-            }
-            if (json.has("time")) {
-                int time = json.getInt("time");
-                int dt = (int) (System.currentTimeMillis() / 1000) - time;
-                AppConst.DetaTime = (dt + AppConst.DetaTime * 9) / 10;
-                Log.d(AppConst.TAG_LOG, "服务器时间差" + AppConst.DetaTime);
-            }
-            if (arg1 == 3) {
-                return true;
-            }
-            playMedia(payComp);
-
-        } catch (JSONException e) {
-            Log.w(AppConst.TAG_LOG, e);
+        if (arg1 == 3) {
+            return true;
         }
-
+        playMedia(payComp);
         return true;
     }
 
     private long lastSendTime;
+    private long lastResponseTime;
 
     /**
      * 发送错误信息到服务器
@@ -304,24 +287,29 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         lastSendTime = System.currentTimeMillis();
         Log.d(AppConst.TAG_LOG, "发送在线信息");
         //取消发送在线消息
-//        if(AppConst.NoticeUrl.indexOf(AppConst.HostUrl)==0){
-//            RequestUtils.getRequest(AppConst.authUrl("person/state/online") + "&v=" + AppConst.version + "&b=" + AppConst.Battery, new IHttpResponse() {
-//                @Override
-//                public void OnHttpData(String data) {
-//                    handleMessage(data, 3);
-//                }
-//
-//                @Override
-//                public void OnHttpDataError(IOException e) {
-//                    Log.w(AppConst.TAG_LOG,e);
-//                }
-//            });
-//        }else{
-//            lastNetTime = System.currentTimeMillis();
-//        }
-        //取消发送在线消息
+        RequestData post = RequestData.newInstance(AppConst.NetTypeOnline);
+        RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
+            @Override
+            protected void onJsonResponse(JSONObject json) {
+                lastResponseTime = System.currentTimeMillis();
+                try {
+                    if (json.getInt("code") != 0) {
+                        String emsg = json.getString("msg");
+                        LogUtil.e(emsg);
+                        return;
+                    }
 
-
+                    if (json.has("time")) {
+                        int time = json.getInt("time");
+                        int dt = (int) (System.currentTimeMillis() / 1000) - time;
+                        AppConst.DetaTime = (dt + AppConst.DetaTime * 9) / 10;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+//        lastResponseTime = System.currentTimeMillis();
     }
 
 
@@ -330,8 +318,10 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
      * 在听到 微信到账1元之后.听到支付已完成,就知道系统没毛病.如果不能同时听到2声音.表示又问题了..
      * 但是这个播放声音我的手机老是出毛病.重启后就好了..
      */
-    public void payCompSounds(){
-        if (AppConst.PlaySounds) {payComp.start();}
+    public void payCompSounds() {
+        if (AppConst.PlaySounds) {
+            payComp.start();
+        }
     }
 
 
@@ -341,11 +331,11 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     @Override
     public void onDestroy() {
 //        if(AppConst.ManualExit) return;
-        if(payComp!=null){
+        if (payComp != null) {
             payComp.release();
-            payComp= null;
+            payComp = null;
         }
-        if(wakeLock!=null){
+        if (wakeLock != null) {
             wakeLock.release();
             wakeLock = null;
         }

@@ -83,6 +83,7 @@ public class AppConst {
      *  */
     public static final String NetTypeLogin="login";
     public static final String NetTypeNotify="notify";
+    public static final String NetTypeOnline="online";
     //app绑定
     public static final String NetTypeBindCode="bindCode";
     public static final String NetTypeUnBindCode="unbindCode";

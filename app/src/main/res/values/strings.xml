@@ -8,6 +8,7 @@
     <string name="action_setting">设置</string>
     <string name="action_exitapp">退出</string>
     <string name="action_apiset">自定义接口</string>>
+    <string name="action_runtime">日志</string>>
     <!--<string name="title_activity_login">登录</string>-->
 
     <!-- Strings related to login -->

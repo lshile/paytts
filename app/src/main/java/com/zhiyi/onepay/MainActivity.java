@@ -310,6 +310,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_exitapp:
                 exit();
                 break;
+            case R.id.action_runtime:
+                Intent intent = new Intent(MainActivity.this, RunTimeActivity.class);
+                startActivity(intent);
+                break;
         }
         return true;
     }

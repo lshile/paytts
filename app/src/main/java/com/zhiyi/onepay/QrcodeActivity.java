@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -270,12 +271,15 @@ public class QrcodeActivity extends AppCompatActivity {
 
     private void updateText(JSONObject data, View view) throws JSONException {
         String type = data.getString("pay_type");
-        TextView textView = null;
+        TextView textView = view.findViewById(R.id.qr_zfb_num);
+        TextView textQrtype = view.findViewById(R.id.qr_type);
+        ImageView img = view.findViewById(R.id.img_zfb);
         if (QrCodeData.NAME_ALI.equals(type)) {
-            textView = view.findViewById(R.id.qr_zfb_num);
 
         } else if (QrCodeData.NAME_WX.equals(type)) {
-            textView = view.findViewById(R.id.qr_wx_num);
+            img.setImageResource(R.drawable.wx);
+        }else{
+            img.setImageResource(R.drawable.ukafu);
         }
         int num = 0;
         if (data.has("count")) {
@@ -285,5 +289,6 @@ public class QrcodeActivity extends AppCompatActivity {
             num = Integer.parseInt(numStr) + 1;
         }
         textView.setText(num + "");
+        textQrtype.setText(type);
     }
 }

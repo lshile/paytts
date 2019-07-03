@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.zhiyi.onepay.consts.ActionName;
 import com.zhiyi.onepay.util.AppUtil;
 import com.zhiyi.onepay.util.DBManager;
+import com.zhiyi.onepay.util.LogUtil;
 import com.zhiyi.onepay.util.RequestUtils;
 import com.zhiyi.onepay.worker.NotifyFilter;
 
@@ -139,7 +140,7 @@ public class NotificationMonitorService extends NotificationListenerService {
         }
         String title = bundle.getString("android.title");
         String text = bundle.getString("android.text");
-        Log.i(AppConst.TAG_LOG, "Notification posted [" + pkgName + "]:" + title + " & " + text);
+        LogUtil.i("Notification posted [" + pkgName + "]:" + title + " & " + text);
         if(text == null){
             //没有消息.垃圾
             return;

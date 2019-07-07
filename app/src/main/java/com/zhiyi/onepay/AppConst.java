@@ -81,14 +81,30 @@ public class AppConst {
     /**
      * 网络交互KEY
      *  */
+    /**
+     * 登录
+     * */
     public static final String NetTypeLogin="login";
+    /**
+     * 通知,收到感兴趣的通知,发给服务器
+     * */
     public static final String NetTypeNotify="notify";
+    /**
+     * 轮询,告诉服务器我在线
+     * */
     public static final String NetTypeOnline="online";
-    //app绑定
+    /**app绑定,获取绑定码*/
     public static final String NetTypeBindCode="bindCode";
+    /**app绑定,清理绑定码*/
     public static final String NetTypeUnBindCode="unbindCode";
     //二维码上传,获取
+    /**
+     * 二维码列表
+     * */
     public static final String NetTypeQrcodeList="qrList";
+    /**
+     * 上传二维码
+     * */
     public static final String NetTypeQrcodeUpload="qrUpload";
 
     public static final String authUrl(String api) {

@@ -34,6 +34,7 @@ public class WebViewActivity extends AppCompatActivity {
         if (Url == null) {
             Url = "https://www.baidu.com";
         }
+        webView.addJavascriptInterface(new JsInterface(),"client");
         webView.loadUrl(Url);
     }
 

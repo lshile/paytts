@@ -12,6 +12,7 @@ public class AppConst {
     public static final String KeyAppId = "appid";
     public static final String KeyToken = "token";
     public static final String KeySecret = "secret";
+    public static final String KeyWebUrl = "weburl";
     public static final String KeyIsCustom = "is_custom";
     public static final String KeyNoticeUrl = "notice_url";
     public static final String KeyNoticeAppId = "notice_appid";
@@ -106,6 +107,7 @@ public class AppConst {
      * 上传二维码
      * */
     public static final String NetTypeQrcodeUpload="qrUpload";
+    public static String WebUrl;
 
     public static final String authUrl(String api) {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;

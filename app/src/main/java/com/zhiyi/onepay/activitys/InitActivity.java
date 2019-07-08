@@ -109,6 +109,9 @@ public class InitActivity extends AppCompatActivity {
                         AppConst.Secret = jsonObject.getString(AppConst.KeySecret);
                         dbm.setConfig(AppConst.KeyUKFNoticeSecret,AppConst.Secret);
                     }
+                    if(jsonObject.has(AppConst.KeyWebUrl)){
+                        AppConst.WebUrl = jsonObject.getString(AppConst.KeyWebUrl);
+                    }
                 } catch (JSONException e) {
                     LogUtil.e("login error",e);
                 }

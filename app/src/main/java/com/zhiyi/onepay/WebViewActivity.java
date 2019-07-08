@@ -32,7 +32,7 @@ public class WebViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String Url = intent.getStringExtra(AppConst.ACTION_URL);
         if (Url == null) {
-            Url = "https://www.baidu.com";
+            Url = "https://www.ukafu.com/default_app_h5.html";
         }
         webView.addJavascriptInterface(new JsInterface(),"client");
         webView.loadUrl(Url);

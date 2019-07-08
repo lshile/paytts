@@ -9,12 +9,10 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -42,11 +40,9 @@ import android.widget.Toast;
 
 import com.zhiyi.onepay.activitys.SettingActivity;
 import com.zhiyi.onepay.consts.ActionName;
-import com.zhiyi.onepay.sms.SmsService;
 import com.zhiyi.onepay.util.DBManager;
 import com.zhiyi.onepay.util.RequestData;
 import com.zhiyi.onepay.util.RequestUtils;
-import com.zhiyi.onepay.util.ToastUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch swt_mute;
     private Button btn_qrcode;
     private Button btn_merchant;
-    private Button btn_log;
+    private Button btn_web;
     private TextView textView;
     private DBManager dbm;
 
@@ -142,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
         btn_qrcode = (Button) findViewById(R.id.btn_qrcode);
         btn_merchant = (Button)findViewById(R.id.btn_merchant);
-        btn_log = (Button)findViewById(R.id.btn_log);
+        btn_web = (Button)findViewById(R.id.btn_web);
 
         swt_service.setChecked(false);
         swt_smsservice.setChecked(false);
@@ -212,11 +208,14 @@ public class MainActivity extends AppCompatActivity {
                 openQrcode();
             }
         });
-        btn_log.setOnClickListener(new View.OnClickListener() {
+        btn_web.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LogActivity.class);
+                Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+                intent.putExtra(AppConst.ACTION_URL,AppConst.WebUrl);
                 startActivity(intent);
+//                Intent intent = new Intent(MainActivity.this, LogActivity.class);
+//                startActivity(intent);
             }
         });
 

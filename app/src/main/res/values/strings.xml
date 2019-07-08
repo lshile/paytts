@@ -18,7 +18,7 @@
     <string name="action_to_sms">"监控短信"</string>
     <string name="action_to_wx">微信</string>
     <string name="action_to_zfb">支付宝</string>
-    <string name="action_to_log">日志记录</string>
+    <string name="action_to_web">服务中心</string>
     <string name="action_to_privileges">服务权限</string>
     <string name="action_open_setting">打开权限设置</string>
     <string name="action_to_mute">静音</string>

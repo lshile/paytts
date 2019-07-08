@@ -213,8 +213,8 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                     break;
                 }
                 postState();
-                //20秒,没消息了.提示网络异常
-                if (now - lastResponseTime > 20000) {
+                //30秒,没消息了.提示网络异常
+                if (now - lastResponseTime > 30000) {
                     playMedia(payNetWorkError);
                 }
             } while (false);

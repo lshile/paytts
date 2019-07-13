@@ -9,7 +9,7 @@ import java.util.Date;
 
 
 public class LogUtil {
-    private static final boolean debug = false;
+    private static final boolean debug = true;
     private static LogUtil instance = new LogUtil();
     private String[] logArr;
     private int index;

@@ -14,7 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.tencent.bugly.Bugly;
 import com.zhiyi.onepay.AppConst;
+import com.zhiyi.onepay.BuildConst;
 import com.zhiyi.onepay.HttpJsonResponse;
 import com.zhiyi.onepay.IHttpResponse;
 import com.zhiyi.onepay.MainActivity;
@@ -27,6 +29,7 @@ import com.zhiyi.onepay.util.RequestUtils;
 import com.zhiyi.onepay.util.StringUtils;
 import com.zhiyi.onepay.util.ToastUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,6 +71,7 @@ public class InitActivity extends AppCompatActivity {
                 InitActivity.this.toCustomSetting();
             }
         });
+        Bugly.init(getApplicationContext(), BuildConst.BuglyId, false);
     }
 
     private void onOkClick(){
@@ -109,8 +113,14 @@ public class InitActivity extends AppCompatActivity {
                         AppConst.Secret = jsonObject.getString(AppConst.KeySecret);
                         dbm.setConfig(AppConst.KeyUKFNoticeSecret,AppConst.Secret);
                     }
-                    if(jsonObject.has(AppConst.KeyWebUrl)){
-                        AppConst.WebUrl = jsonObject.getString(AppConst.KeyWebUrl);
+                    //这里添加需要的APP列表
+                    if(jsonObject.has(AppConst.KeyWebAPP)){
+                        JSONArray array = jsonObject.getJSONArray(AppConst.KeyWebAPP);
+                        for(int i=0;i<array.length();i++){
+                            JSONObject app = array.getJSONObject(i);
+                            AppConst.WebApps.add(app.getString("name"));
+                            AppConst.WebUrlS.add(app.getString("url"));
+                        }
                     }
                 } catch (JSONException e) {
                     LogUtil.e("login error",e);

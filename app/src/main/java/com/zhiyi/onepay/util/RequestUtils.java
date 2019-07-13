@@ -141,7 +141,7 @@ public class RequestUtils {
             @Override
             public void onResponse(Response response) throws IOException {
                 String rs = response.body().string();
-                Log.i("ZYKJ","response: "+rs);
+                LogUtil.i("response: "+rs);
                 callback.OnHttpData(rs);
             }
         });

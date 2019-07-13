@@ -1,7 +1,7 @@
 /**
- *  个人收款 https://gitee.com/DaLianZhiYiKeJi/xpay
- *  大连致一科技有限公司
- * */
+ * 个人收款 https://gitee.com/DaLianZhiYiKeJi/xpay
+ * 大连致一科技有限公司
+ */
 
 package com.zhiyi.onepay;
 
@@ -34,6 +34,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private Switch swt_smsservice;
     private Switch swt_mute;
     private Button btn_qrcode;
-    private Button btn_merchant;
     private Button btn_web;
     private TextView textView;
     private DBManager dbm;
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private IMessageHander msgHander = new IMessageHander() {
         @Override
         public void handMessage(Message msg) {
-            Log.i(LogTag,msg.obj.toString());
+            Log.i(LogTag, msg.obj.toString());
         }
     };
     private ServiceConnection conn = new ServiceConnection() {
@@ -92,24 +92,24 @@ public class MainActivity extends AppCompatActivity {
     };
 
     //不知到什么原因.广播收不到
-    private BroadcastReceiver receiver = new BootRecevier() ;
+    private BroadcastReceiver receiver = new BootRecevier();
 
 
     public MainActivity() {
     }
 
-    private void mHandMessage(Message msg){
-        if(msg.what == 1){
+    private void mHandMessage(Message msg) {
+        if (msg.what == 1) {
             String code = msg.obj.toString();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("获取绑定码");
-            builder.setMessage("您的绑定码为: "+code+" ,请通过商户后台添加绑定,在绑定成功之前.请勿关闭");
+            builder.setMessage("您的绑定码为: " + code + " ,请通过商户后台添加绑定,在绑定成功之前.请勿关闭");
             builder.setIcon(R.drawable.icon);
             builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    RequestData post  = RequestData.newInstance(AppConst.NetTypeUnBindCode);
-                    RequestUtils.post(AppConst.NoticeUrl,post,new IHttpResponse() {
+                    RequestData post = RequestData.newInstance(AppConst.NetTypeUnBindCode);
+                    RequestUtils.post(AppConst.NoticeUrl, post, new IHttpResponse() {
 
                         @Override
                         public void OnHttpData(String data) {
@@ -131,45 +131,44 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("ZYKJ", "mainactivity");
         setContentView(R.layout.activity_main);
-        swt_fuwu = (Switch)findViewById(R.id.p1);
-        swt_service = (Switch)findViewById(R.id.service);
-        swt_smsservice = (Switch)findViewById(R.id.smsservice);
-        swt_mute = (Switch)findViewById(R.id.mute);
+        swt_fuwu = (Switch) findViewById(R.id.p1);
+        swt_service = (Switch) findViewById(R.id.service);
+        swt_smsservice = (Switch) findViewById(R.id.smsservice);
+        swt_mute = (Switch) findViewById(R.id.mute);
 
         btn_qrcode = (Button) findViewById(R.id.btn_qrcode);
-        btn_merchant = (Button)findViewById(R.id.btn_merchant);
-        btn_web = (Button)findViewById(R.id.btn_web);
+        btn_web = (Button) findViewById(R.id.btn_web);
 
         swt_service.setChecked(false);
         swt_smsservice.setChecked(false);
-        handler = new Handler(){
+        handler = new Handler() {
             public void handleMessage(Message msg) {
                 mHandMessage(msg);
             }
         };
 
-        textView = (TextView)findViewById(R.id.textView_Help);
+        textView = (TextView) findViewById(R.id.textView_Help);
         dbm = new DBManager(this);
         //
         swt_mute.setChecked(!AppConst.PlaySounds);
         //
-        TextView textv = (TextView)findViewById(R.id.textView_version);
+        TextView textv = (TextView) findViewById(R.id.textView_version);
         try {
-            AppConst.version = getPackageManager().getPackageInfo(getPackageName(),0).versionCode;
+            AppConst.version = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
             // 显示版本号
-            textv.setText(textv.getText()+""+AppConst.version);
+            textv.setText(textv.getText() + "" + AppConst.version);
             //
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
         IntentFilter filter = new IntentFilter(AppConst.IntentAction);
-        registerReceiver(receiver,filter);
+        registerReceiver(receiver, filter);
 
         swt_fuwu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked != enabedPrivileges){
+                if (isChecked != enabedPrivileges) {
                     openNotificationListenSettings();
                 }
             }
@@ -178,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         swt_service.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     checkStatus();
                 }
             }
@@ -188,14 +187,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 boolean isChecked = swt_smsservice.isEnabled();
-                if(isChecked){
+                if (isChecked) {
                     if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_SMS}, 1);
                         return true;
-                    }else{
+                    } else {
                         sendBroadcast(new Intent(ActionName.StartSMS));
                     }
-                }else{
+                } else {
                     sendBroadcast(new Intent(ActionName.StopSMS));
                 }
                 return false;
@@ -208,48 +207,48 @@ public class MainActivity extends AppCompatActivity {
                 openQrcode();
             }
         });
-        btn_web.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-                intent.putExtra(AppConst.ACTION_URL,AppConst.WebUrl);
-                startActivity(intent);
-//                Intent intent = new Intent(MainActivity.this, LogActivity.class);
+//        btn_web.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+//                intent.putExtra(AppConst.ACTION_URL,AppConst.WebUrl);
 //                startActivity(intent);
-            }
-        });
+////                Intent intent = new Intent(MainActivity.this, LogActivity.class);
+////                startActivity(intent);
+//            }
+//        });
 
-        textView.setOnClickListener(new View.OnClickListener(){
+        LinearLayout btn_container = findViewById(R.id.btn_container);
+        for (int i = 0; i < AppConst.WebUrlS.size(); i++) {
+            Button btn = getLayoutInflater().inflate(R.layout.btn_layout,btn_container).findViewById(R.id.btn_default);
+            btn.setText(AppConst.WebApps.get(i));
+            btn.setTag(AppConst.WebUrlS.get(i));
+            btn.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    String url = v.getTag().toString();
+                    Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+                    intent.putExtra(AppConst.ACTION_URL, url);
+                    startActivity(intent);
+                }
+            });
+        }
+
+
+        textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    Intent intent = new Intent();
-                    intent.setData(Uri.parse("https://www.ukafu.com/help.html"));//Url 就是你要打开的网址
-                    intent.setAction(Intent.ACTION_VIEW);
-                    startActivity(intent); //启动浏览器
+                Intent intent = new Intent();
+                intent.setData(Uri.parse("https://www.ukafu.com/help.html"));//Url 就是你要打开的网址
+                intent.setAction(Intent.ACTION_VIEW);
+                startActivity(intent); //启动浏览器
             }
         });
 
-        btn_merchant.setOnClickListener(
-                new View.OnClickListener(){
-                     @Override
-                     public void onClick(View v) {
-                         Intent intent = new Intent(MainActivity.this, MerchantActivity.class);
-                         startActivity(intent);
-                     }
-                 }
-        );
 
-        Button btn_order = (Button)findViewById(R.id.btn_order);
-        btn_order.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-                intent.putExtra(AppConst.ACTION_URL,AppConst.HostUrl+"app/start/index.html#/token="+AppConst.Token+"/appid="+AppConst.AppId);
-                startActivity(intent);
-            }
-        });
         // 静音
-        swt_mute.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        swt_mute.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 changeMutestate(isChecked);
@@ -264,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
         //
         checkStatus();
     }
-
 
 
     @Override
@@ -286,13 +284,13 @@ public class MainActivity extends AppCompatActivity {
 //                break;
 //                不在绑定服务器.
                 RequestData post = RequestData.newInstance(AppConst.NetTypeBindCode);
-                RequestUtils.post(AppConst.NoticeUrl,post, new HttpJsonResponse() {
+                RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
 
                     @Override
                     protected void onJsonResponse(JSONObject data) {
                         String code = null;
                         try {
-                            code = ""+data.getInt("bind_code");
+                            code = "" + data.getInt("bind_code");
                         } catch (JSONException e) {
                         }
                         Message msg = new Message();
@@ -320,20 +318,21 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 设置界面
      * */
-    private void OpenSetting(){
+    private void OpenSetting() {
         Intent intent = new Intent(MainActivity.this, SettingActivity.class);
         startActivity(intent);
     }
 
     /** 退出 */
-    private void exit(){
+    private void exit() {
         unbindService(conn);
         disableNotificationService();
     }
+
     /** 退出調用
      * 功能 Disable掉 NotificationService 直接退出App
      * */
-    private void disableNotificationService(){
+    private void disableNotificationService() {
         // 先disable 服务
         PackageManager localPackageManager = getPackageManager();
         localPackageManager.setComponentEnabledSetting(new ComponentName(this, NotificationMonitorService.class),
@@ -341,20 +340,21 @@ public class MainActivity extends AppCompatActivity {
         //
     }
 
-        private boolean enabedPrivileges;
-    private void checkStatus(){
+    private boolean enabedPrivileges;
+
+    private void checkStatus() {
         //权限开启.才能启动服务
         boolean enabled = isEnabled();
         enabedPrivileges = enabled;
         swt_fuwu.setChecked(enabled);
-        if(!enabled) {
+        if (!enabled) {
             swt_service.setEnabled(false);
             return;
         }
         swt_service.setEnabled(true);
         //开启服务
         ComponentName name = startService(new Intent(this, NotificationMonitorService.class));
-        if(name ==null) {
+        if (name == null) {
             swt_service.setChecked(false);
             Toast.makeText(getApplicationContext(), "服务开启失败", Toast.LENGTH_LONG).show();
             return;
@@ -367,29 +367,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void changeMutestate(boolean ischecked){
+    private void changeMutestate(boolean ischecked) {
         AppConst.PlaySounds = !ischecked;
-        dbm.setConfig(AppConst.KeyMute,""+AppConst.PlaySounds);
+        dbm.setConfig(AppConst.KeyMute, "" + AppConst.PlaySounds);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             keyCode = KeyEvent.KEYCODE_HOME;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private boolean isEnabled()
-    {
+    private boolean isEnabled() {
         String str = getPackageName();
         String localObject = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
-        if (!TextUtils.isEmpty(localObject))
-        {
+        if (!TextUtils.isEmpty(localObject)) {
             String[] strArr = (localObject).split(":");
             int i = 0;
-            while (i < strArr.length)
-            {
+            while (i < strArr.length) {
                 ComponentName localComponentName = ComponentName.unflattenFromString(strArr[i]);
                 if ((localComponentName != null) && (TextUtils.equals(str, localComponentName.getPackageName())))
                     return true;
@@ -420,7 +417,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void openQrcode(){
+    private void openQrcode() {
         Intent intent = new Intent(MainActivity.this, QrcodeActivity.class);
         startActivity(intent);
     }
@@ -446,8 +443,7 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i("ZYKJ","MainActivity Send Notice Comp");
 //    }
 
-    private void toggleNotificationListenerService()
-    {
+    private void toggleNotificationListenerService() {
         PackageManager localPackageManager = getPackageManager();
         localPackageManager.setComponentEnabledSetting(new ComponentName(this, NotificationMonitorService.class),
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
@@ -466,8 +462,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 打开通知权限设置.一般手机根本找不到哪里设置
      */
-    private void openNotificationListenSettings()
-    {
+    private void openNotificationListenSettings() {
 
         try {
             Intent intent;

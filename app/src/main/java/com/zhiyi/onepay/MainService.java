@@ -204,7 +204,6 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
             do {
                 //10秒内有交互,取消
                 if (now - lastResponseTime < 20000) {
-                    Log.d(AppConst.TAG_LOG, "20秒内有交互");
                     break;
                 }
                 //发送在线通知,保持让系统时时刻刻直到app在线,5秒发送一次
@@ -293,12 +292,6 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
             protected void onJsonResponse(JSONObject json) {
                 lastResponseTime = System.currentTimeMillis();
                 try {
-                    if (json.getInt("code") != 0) {
-                        String emsg = json.getString("msg");
-                        LogUtil.e(emsg);
-                        return;
-                    }
-
                     if (json.has("time")) {
                         int time = json.getInt("time");
                         int dt = (int) (System.currentTimeMillis() / 1000) - time;

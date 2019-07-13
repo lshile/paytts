@@ -1,18 +1,24 @@
 package com.zhiyi.onepay;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.zhiyi.onepay.components.ZyWebViewClient;
+import com.zhiyi.onepay.util.LogUtil;
+import com.zhiyi.onepay.util.SystemProgramUtils;
 
 public class WebViewActivity extends AppCompatActivity {
 
     private WebView webView;
     private static String LOG_TAG = "ZYKJ";
-
+    private JsInterface  jsInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +40,45 @@ public class WebViewActivity extends AppCompatActivity {
         if (Url == null) {
             Url = "https://www.ukafu.com/default_app_h5.html";
         }
-        webView.addJavascriptInterface(new JsInterface(),"client");
+        jsInterface = new JsInterface(webView,this);
+        webView.addJavascriptInterface(jsInterface,"client");
         webView.loadUrl(Url);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (intent == null) {
+            return;
+        }
+        if (requestCode == SystemProgramUtils.REQUEST_CODE_ZHAOPIAN) {
+            Uri uri = intent.getData();
+            if (uri == null) {
+                Toast.makeText(this, "目标数据为空", Toast.LENGTH_LONG);
+                return;
+            }
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor == null) {
+                Toast.makeText(this, "找不到数据", Toast.LENGTH_LONG);
+                return;
+            }
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            if (idx < 0) {
+                Toast.makeText(this, "无法访问相册", Toast.LENGTH_LONG);
+                return;
+            }
+            String currentPhotoString = cursor.getString(idx);
+            cursor.close();
+
+            Intent qIntent = new Intent(WebViewActivity.this, QrcodeUploadActivity.class);
+            qIntent.putExtra("file", currentPhotoString);
+            qIntent.putExtra("forupload",false);
+            startActivityForResult(qIntent, 101);
+        }else if(requestCode == SystemProgramUtils.REQUEST_CODE_PERMISSION){
+            LogUtil.i("请求权限结果:"+resultCode);
+        }else if(requestCode == 101){
+            jsInterface.onQrcodeload(intent);
+        }
+    }
 }

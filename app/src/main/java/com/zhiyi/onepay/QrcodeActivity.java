@@ -124,6 +124,7 @@ public class QrcodeActivity extends AppCompatActivity {
 
                 Intent qIntent = new Intent(QrcodeActivity.this,QrcodeUploadActivity.class);
                 qIntent.putExtra("file",currentPhotoString);
+                qIntent.putExtra("forupload",true);
                 startActivityForResult(qIntent,UPLOAD);
 //                Bitmap bitmap = resizePhono(currentPhotoString);
         }else if(requestCode == UPLOAD) {

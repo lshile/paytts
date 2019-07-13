@@ -44,6 +44,7 @@ public class QrcodeUploadActivity extends AppCompatActivity {
     private String qrcode;
     private String currentPhotoString;
     private Handler handler;
+    private boolean forUpload;
     //    private ImageClient imageClient;
 //    private QrCodeData qrData;
 
@@ -55,6 +56,7 @@ public class QrcodeUploadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_qrcode_upload);
         Intent intent = getIntent();
         currentPhotoString = intent.getStringExtra("file");
+        forUpload = intent.hasExtra("forupload")?intent.getBooleanExtra("forupload",false):true;
         txt_url = findViewById(R.id.txt_url);
         ImageView img = findViewById(R.id.image_view);
         img.setImageURI(Uri.fromFile(new File(currentPhotoString)));
@@ -96,18 +98,32 @@ public class QrcodeUploadActivity extends AppCompatActivity {
             post.put("code",qrcode);
         } catch (JSONException e) {
         }
-        RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
-            @Override
-            protected void onJsonResponse(JSONObject data) {
-                Intent intent = new Intent();
-                //把返回数据存入Intent
-                intent.putExtra("result", data.toString());
-                //设置返回数据
-                setResult(RESULT_OK, intent);
-                //关闭Activity
-                finish();
-            }
-        });
+        if(forUpload){
+            RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
+                @Override
+                protected void onJsonResponse(JSONObject data) {
+                    Intent intent = new Intent();
+                    //把返回数据存入Intent
+                    intent.putExtra("result", data.toString());
+                    //设置返回数据
+                    setResult(RESULT_OK, intent);
+                    //关闭Activity
+                    finish();
+                }
+            });
+        }else{
+            Intent intent = new Intent();
+
+            //把返回数据存入Intent
+            intent.putExtra("code", qrcode);
+            intent.putExtra("money", money);
+            intent.putExtra("name", name);
+            //设置返回数据
+            setResult(RESULT_OK, intent);
+            //关闭Activity
+            finish();
+        }
+
     }
 
     private void loadImage(){

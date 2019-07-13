@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.zhiyi.onepay.util.DBManager;
 
+import java.util.ArrayList;
+
 /**
  * Created by Administrator on 2018/8/6.
  */
@@ -12,7 +14,7 @@ public class AppConst {
     public static final String KeyAppId = "appid";
     public static final String KeyToken = "token";
     public static final String KeySecret = "secret";
-    public static final String KeyWebUrl = "weburl";
+    public static final String KeyWebAPP = "webapp";
     public static final String KeyIsCustom = "is_custom";
     public static final String KeyNoticeUrl = "notice_url";
     public static final String KeyNoticeAppId = "notice_appid";
@@ -24,6 +26,8 @@ public class AppConst {
     public static final String KeyBoolLog = "b_set_log";
 //    public static final String KeyBoolWx = "b_set_wx";
 //    public static final String KeyBoolZfb = "b_set_zfb";
+
+    public static boolean isOnline;
     /**
      * 音量
      */
@@ -107,7 +111,8 @@ public class AppConst {
      * 上传二维码
      * */
     public static final String NetTypeQrcodeUpload="qrUpload";
-    public static String WebUrl;
+    public static ArrayList<String> WebUrlS = new ArrayList<>();
+    public static ArrayList<String> WebApps = new ArrayList<>();
 
     public static final String authUrl(String api) {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;

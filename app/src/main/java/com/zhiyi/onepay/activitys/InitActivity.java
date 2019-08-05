@@ -2,25 +2,19 @@ package com.zhiyi.onepay.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.tencent.bugly.Bugly;
 import com.zhiyi.onepay.AppConst;
 import com.zhiyi.onepay.BuildConst;
 import com.zhiyi.onepay.HttpJsonResponse;
-import com.zhiyi.onepay.IHttpResponse;
 import com.zhiyi.onepay.MainActivity;
 import com.zhiyi.onepay.R;
+import com.zhiyi.onepay.data.H5AppData;
 import com.zhiyi.onepay.util.AppUtil;
 import com.zhiyi.onepay.util.DBManager;
 import com.zhiyi.onepay.util.LogUtil;
@@ -32,8 +26,6 @@ import com.zhiyi.onepay.util.ToastUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 public class InitActivity extends AppCompatActivity {
     private DBManager dbm;
@@ -118,8 +110,7 @@ public class InitActivity extends AppCompatActivity {
                         JSONArray array = jsonObject.getJSONArray(AppConst.KeyWebAPP);
                         for(int i=0;i<array.length();i++){
                             JSONObject app = array.getJSONObject(i);
-                            AppConst.WebApps.add(app.getString("name"));
-                            AppConst.WebUrlS.add(app.getString("url"));
+                            AppConst.h5Apps.add(new H5AppData(app));
                         }
                     }
                 } catch (JSONException e) {

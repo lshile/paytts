@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.zhiyi.onepay.activitys.SettingActivity;
 import com.zhiyi.onepay.consts.ActionName;
+import com.zhiyi.onepay.data.H5AppData;
 import com.zhiyi.onepay.util.DBManager;
 import com.zhiyi.onepay.util.RequestData;
 import com.zhiyi.onepay.util.RequestUtils;
@@ -219,10 +220,11 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         LinearLayout btn_container = findViewById(R.id.btn_container);
-        for (int i = 0; i < AppConst.WebUrlS.size(); i++) {
+        for (int i = 0; i < AppConst.h5Apps.size(); i++) {
+            H5AppData appData = AppConst.h5Apps.get(i);
             Button btn = getLayoutInflater().inflate(R.layout.btn_layout,btn_container).findViewById(R.id.btn_default);
-            btn.setText(AppConst.WebApps.get(i));
-            btn.setTag(AppConst.WebUrlS.get(i));
+            btn.setText(appData.name);
+            btn.setTag(appData.url);
             btn.setOnClickListener(new View.OnClickListener() {
 
                 @Override

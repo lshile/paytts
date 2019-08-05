@@ -2,6 +2,7 @@ package com.zhiyi.onepay;
 
 import android.text.TextUtils;
 
+import com.zhiyi.onepay.data.H5AppData;
 import com.zhiyi.onepay.util.DBManager;
 
 import java.util.ArrayList;
@@ -111,8 +112,7 @@ public class AppConst {
      * 上传二维码
      * */
     public static final String NetTypeQrcodeUpload="qrUpload";
-    public static ArrayList<String> WebUrlS = new ArrayList<>();
-    public static ArrayList<String> WebApps = new ArrayList<>();
+    public static ArrayList<H5AppData> h5Apps = new ArrayList<>();
 
     public static final String authUrl(String api) {
         return HostUrl + api + "?appid=" + AppId + "&token=" + Token;

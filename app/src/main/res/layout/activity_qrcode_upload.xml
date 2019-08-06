@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.zhiyi.onepay.QrcodeUploadActivity">
+    tools:context="com.zhiyi.ukafu.QrcodeUploadActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="金额"
-            android:hint="二维码面额"
+            android:hint="二维码面额,未指定金额写0"
             android:ems="10"
             android:inputType="numberDecimal"
             android:paddingLeft="2dp" />
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="Name"
-            android:hint="收款人名称"
+            android:hint="收款人名称,如果大额可能需要验证姓名"
             android:ems="10"
             android:inputType="textPersonName" />
 

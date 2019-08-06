@@ -1,12 +1,12 @@
-*.iml
-.gradle
-/local.properties
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-app/release/
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+.gradle/
 .idea/
-removed lib/
-app/src/main/java/com/zhiyi/onepay/TestNotification.java
-app/pxpay/release/
+app/release/
+app/VIP/

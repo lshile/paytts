@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.zhiyi.onepay.MainActivity">
+    tools:context="com.zhiyi.ukafu.MainActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -81,24 +81,6 @@
                     android:layout_weight="1"
                     android:background="@android:color/holo_blue_dark"
                     android:text="@string/action_to_web"
-                    android:textStyle="bold" />
-
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_qrcode"
-                    style="@style/Widget.AppCompat.Button.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/holo_green_dark"
-                    android:text="@string/action_qrcode"
                     android:textStyle="bold" />
 
 

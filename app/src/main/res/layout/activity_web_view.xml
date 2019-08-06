@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-    tools:context="com.zhiyi.onepay.WebViewActivity">
+    tools:context="com.zhiyi.ukafu.activitys.WebViewActivity">
 
     <WebView
         android:id="@+id/web_view"

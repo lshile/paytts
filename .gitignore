@@ -10,3 +10,4 @@ nbdist/
 .idea/
 app/release/
 app/VIP/
+local.properties

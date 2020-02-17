@@ -4,20 +4,6 @@ ext {
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('E:\\workspace\\key\\ukafu.zykj')
-            storePassword '99044231'
-            keyAlias = 'ukafu'
-            keyPassword '99044231'
-        }
-        release {
-            storeFile file('E:\\workspace\\key\\ukafu.zykj')
-            storePassword '99044231'
-            keyAlias = var
-            keyPassword '99044231'
-        }
-    }
     compileSdkVersion 28
     defaultConfig {
         applicationId appid
@@ -26,7 +12,6 @@ android {
         versionCode 20003
         versionName "2.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.release
         buildConfigField "String","BUGLY_APPID",'"ff0995764e"'
         buildConfigField "String","BUGLY_KEY",'"9470054f-3671-467b-bf31-8c9244c8b781"'
     }
@@ -34,11 +19,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
         VIP {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
             manifestPlaceholders = [package: appid]
             versionNameSuffix = 'vip'
             applicationIdSuffix = 'vip'

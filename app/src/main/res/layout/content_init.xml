@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.zhiyi.onepay.activitys.InitActivity"
+    tools:context="com.zhiyi.ukafu.activitys.InitActivity"
     tools:showIn="@layout/activity_init">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="3dp"
-        android:layout_marginStart="3dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="8dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView3"
@@ -30,19 +23,18 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="https://www.ukafu.com/notify_api" />
-
+            android:text="http://demo.ukafu.com/notify_api" />
         <TextView
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="AppId" />
-
         <EditText
             android:id="@+id/edit_appid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:enabled="false"
             android:inputType="textPersonName"
             android:text="0" />
 
@@ -52,16 +44,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_green_dark"
-            android:text="确定" />
+            android:text="连接服务器" />
 
-        <Button
-            android:id="@+id/button_custom"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="自定义配置"
-            tools:layout_editor_absoluteX="145dp"
-            tools:layout_editor_absoluteY="78dp" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

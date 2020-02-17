@@ -8,6 +8,7 @@
     <string name="action_setting">设置</string>
     <string name="action_exitapp">退出</string>
     <string name="action_apiset">自定义接口</string>>
+    <string name="action_runtime">日志</string>>
     <!--<string name="title_activity_login">登录</string>-->
 
     <!-- Strings related to login -->
@@ -17,7 +18,7 @@
     <string name="action_to_sms">"监控短信"</string>
     <string name="action_to_wx">微信</string>
     <string name="action_to_zfb">支付宝</string>
-    <string name="action_to_log">日志记录</string>
+    <string name="action_to_web">服务中心</string>
     <string name="action_to_privileges">服务权限</string>
     <string name="action_open_setting">打开权限设置</string>
     <string name="action_to_mute">静音</string>
@@ -54,7 +55,7 @@
     <string name="label_notice_uri">通知服务器地址</string>
     <string name="label_secret">密钥</string>
     <string name="msg_please_input_right_host_url">请正确输入通知服务器服务器地址</string>
-    <string name="title_activity_init">PXPAY</string>
+    <string name="title_activity_init">UKAFU</string>
 
 
 </resources>

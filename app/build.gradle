@@ -4,16 +4,31 @@ ext {
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('D:\\java\\key\\ukafu.jks')
+            storePassword '111111'
+            keyAlias = 'vip'
+            keyPassword '123456'
+        }
+        vip {
+            storeFile file('D:\\java\\key\\ukafu.jks')
+            storePassword '111111'
+            keyAlias = 'vip'
+            keyPassword '123456'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId appid
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 20003
-        versionName "2.0.3"
+        versionCode 20100
+        versionName "2.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String","BUGLY_APPID",'"ff0995764e"'
         buildConfigField "String","BUGLY_KEY",'"9470054f-3671-467b-bf31-8c9244c8b781"'
+        buildConfigField "String","BIND_URL",'""'
     }
     buildTypes {
         release {
@@ -27,6 +42,9 @@ android {
             applicationIdSuffix = 'vip'
             buildConfigField "String","BUGLY_APPID",'"1400068562"'
             buildConfigField "String","BUGLY_KEY",'"8e4f5482-b9c6-44d5-96af-58cab3dc407c"'
+            buildConfigField "String","BIND_URL",'"http://seller.m18.com"'
+            signingConfig signingConfigs.vip
+
         }
     }
     compileOptions {

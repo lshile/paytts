@@ -1,11 +1,16 @@
 package com.zhiyi.ukafu.activitys;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -13,7 +18,9 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.zhiyi.ukafu.AppConst;
+import com.zhiyi.ukafu.IMessageHander;
 import com.zhiyi.ukafu.JsInterface;
+import com.zhiyi.ukafu.MainService;
 import com.zhiyi.ukafu.QrcodeUploadActivity;
 import com.zhiyi.ukafu.R;
 import com.zhiyi.ukafu.components.ZyWebViewClient;
@@ -30,6 +37,29 @@ public class WebViewActivity extends AppCompatActivity {
     private DBManager dbm;
     private String Url;
 
+
+    private MainService service;
+    private IMessageHander msgHander = new IMessageHander() {
+        @Override
+        public void handMessage(Message msg) {
+            Log.i(AppConst.TAG_LOG, msg.obj.toString());
+        }
+    };
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            MainService.MyBinder myBinder = (MainService.MyBinder) binder;
+            service = myBinder.getService();
+            service.setMessageHander(msgHander);
+            Log.i(AppConst.TAG_LOG, "MainActive - onServiceConnected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.i(AppConst.TAG_LOG, "MainActive - onServiceDisconnected");
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +73,7 @@ public class WebViewActivity extends AppCompatActivity {
 //                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 //                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,  WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        webView.setWebViewClient(new ZyWebViewClient());
+        webView.setWebViewClient(new ZyWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         //webView.setWebContentsDebuggingEnabled(true);
@@ -63,6 +93,10 @@ public class WebViewActivity extends AppCompatActivity {
         String sck = dbm.getCookie(Url);
         ck.setCookie(Url,sck);
 
+
+        intent = new Intent(this, MainService.class);
+        intent.putExtra("from", "MainActive");
+        bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
 //    @Override
@@ -107,4 +141,7 @@ public class WebViewActivity extends AppCompatActivity {
             jsInterface.onQrcodeload(intent);
         }
     }
+
+
+
 }

@@ -24,19 +24,6 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="http://demo.ukafu.com/notify_api" />
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="AppId" />
-        <EditText
-            android:id="@+id/edit_appid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:enabled="false"
-            android:inputType="textPersonName"
-            android:text="0" />
 
         <Button
             android:id="@+id/button_ok"

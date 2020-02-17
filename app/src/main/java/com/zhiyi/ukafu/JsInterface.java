@@ -47,6 +47,11 @@ public final class JsInterface {
     }
 
 
+    public void getSetting(String name){
+
+    }
+
+
     private String callback;
     @JavascriptInterface
     public void selectQrcode(String callback){

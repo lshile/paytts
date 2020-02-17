@@ -44,6 +44,7 @@ import com.zhiyi.ukafu.activitys.SettingActivity;
 import com.zhiyi.ukafu.activitys.WebViewActivity;
 import com.zhiyi.ukafu.consts.ActionName;
 import com.zhiyi.ukafu.data.H5AppData;
+import com.zhiyi.ukafu.util.AppUtil;
 import com.zhiyi.ukafu.util.DBManager;
 import com.zhiyi.ukafu.util.RequestData;
 import com.zhiyi.ukafu.util.RequestUtils;
@@ -71,27 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
 //    private NotificationChannel mNotificationChannel;
 
-    private MainService service;
-    private IMessageHander msgHander = new IMessageHander() {
-        @Override
-        public void handMessage(Message msg) {
-            Log.i(LogTag, msg.obj.toString());
-        }
-    };
-    private ServiceConnection conn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            MainService.MyBinder myBinder = (MainService.MyBinder) binder;
-            service = myBinder.getService();
-            service.setMessageHander(msgHander);
-            Log.i(LogTag, "MainActive - onServiceConnected");
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.i(LogTag, "MainActive - onServiceDisconnected");
-        }
-    };
 
     //不知到什么原因.广播收不到
     private BroadcastReceiver receiver = new BootRecevier();
@@ -262,9 +243,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = new Intent(this, MainService.class);
-        intent.putExtra("from", "MainActive");
-        bindService(intent, conn, BIND_AUTO_CREATE);
+
         // 手动关闭服务之后 需要重新绑定服务 所以在onCreate处调用
         toggleNotificationListenerService();
         //
@@ -332,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** 退出 */
     private void exit() {
-        unbindService(conn);
+//        unbindService(conn);
         disableNotificationService();
     }
 
@@ -351,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkStatus() {
         //权限开启.才能启动服务
-        boolean enabled = isEnabled();
+        boolean enabled = AppUtil.isNotifycationEnabled(this);
         enabedPrivileges = enabled;
         swt_fuwu.setChecked(enabled);
         if (!enabled) {
@@ -387,21 +366,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private boolean isEnabled() {
-        String str = getPackageName();
-        String localObject = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
-        if (!TextUtils.isEmpty(localObject)) {
-            String[] strArr = (localObject).split(":");
-            int i = 0;
-            while (i < strArr.length) {
-                ComponentName localComponentName = ComponentName.unflattenFromString(strArr[i]);
-                if ((localComponentName != null) && (TextUtils.equals(str, localComponentName.getPackageName())))
-                    return true;
-                i += 1;
-            }
-        }
-        return false;
-    }
 
     // 判断短信是否可以读取
     private boolean checkSMS() {

@@ -20,6 +20,7 @@ public class AppConst {
     public static final String KeyNoticeUrl = "notice_url";
     public static final String KeyNoticeAppId = "notice_appid";
     public static final String KeyNoticeSecret = "notice_secret";
+    public static final String KeyUKFHomeUrl = "uk_home_url";
     public static final String KeyUKFNoticeUrl = "uk_notice_url";
     public static final String KeyUKFNoticeAppId = "uk_notice_appid";
     public static final String KeyUKFNoticeToken = "uk_notice_token";

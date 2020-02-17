@@ -6,9 +6,13 @@
 
 package com.zhiyi.ukafu.util;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.zhiyi.ukafu.consts.ActionName;
@@ -117,5 +121,22 @@ public class AppUtil {
     public static Intent sendOrder(final String payType, final String money, final String username,boolean dianYuan){
         return sendOrder(payType,money,username,null,dianYuan);
     }
+
+    public static boolean isNotifycationEnabled(Activity activity) {
+        String str = activity.getPackageName();
+        String localObject = Settings.Secure.getString(activity.getContentResolver(), "enabled_notification_listeners");
+        if (!TextUtils.isEmpty(localObject)) {
+            String[] strArr = (localObject).split(":");
+            int i = 0;
+            while (i < strArr.length) {
+                ComponentName localComponentName = ComponentName.unflattenFromString(strArr[i]);
+                if ((localComponentName != null) && (TextUtils.equals(str, localComponentName.getPackageName())))
+                    return true;
+                i += 1;
+            }
+        }
+        return false;
+    }
+
 
 }

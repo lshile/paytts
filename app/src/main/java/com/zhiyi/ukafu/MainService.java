@@ -164,7 +164,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         }
     }
 
-    class MyBinder extends Binder {
+    public class MyBinder extends Binder {
         public MainService getService() {
             return MainService.this;
         }

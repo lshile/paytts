@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -136,6 +137,22 @@ public class AppUtil {
             }
         }
         return false;
+    }
+
+    public static void openNotificationListenSettings(Activity activity) {
+
+        try {
+            Intent intent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+            } else {
+                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            }
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            LogUtil.e("notify open fail",e);
+        }
+
     }
 
 

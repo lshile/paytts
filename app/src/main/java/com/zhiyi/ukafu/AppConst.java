@@ -15,7 +15,7 @@ public class AppConst {
     public static final String KeyAppId = "appid";
     public static final String KeyToken = "token";
     public static final String KeySecret = "secret";
-    public static final String KeyWebAPP = "webapp";
+    public static String Cookie = "";
     public static final String KeyIsCustom = "is_custom";
     public static final String KeyNoticeUrl = "notice_url";
     public static final String KeyNoticeAppId = "notice_appid";
@@ -58,6 +58,8 @@ public class AppConst {
     public static String Token = "";
     public static String Secret = "";
     public static String Online = "";
+
+    public static boolean inited = false;
     /**
      * 通知url
      */

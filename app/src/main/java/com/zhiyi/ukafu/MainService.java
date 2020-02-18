@@ -32,6 +32,7 @@ import com.zhiyi.ukafu.data.OrderDataBase;
 import com.zhiyi.ukafu.sms.SmsService;
 import com.zhiyi.ukafu.util.AppUtil;
 import com.zhiyi.ukafu.util.DBManager;
+import com.zhiyi.ukafu.util.LogUtil;
 import com.zhiyi.ukafu.util.RequestData;
 import com.zhiyi.ukafu.util.RequestUtils;
 
@@ -199,6 +200,9 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                 }
                 postMethod(data);
             }
+            if(!AppConst.inited){
+                continue;
+            }
             long now = System.currentTimeMillis();
             do {
                 //10秒内有交互,取消
@@ -297,7 +301,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                         AppConst.DetaTime = (dt + AppConst.DetaTime * 9) / 10;
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    LogUtil.e("resp json error",e);
                 }
             }
         });

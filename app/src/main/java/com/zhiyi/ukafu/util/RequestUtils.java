@@ -15,6 +15,7 @@ import android.util.Log;
 //import com.squareup.okhttp.Request;
 //import com.squareup.okhttp.RequestBody;
 //import com.squareup.okhttp.Response;
+import com.zhiyi.ukafu.AppConst;
 import com.zhiyi.ukafu.IHttpResponse;
 
 //import org.apache.http.HttpEntity;
@@ -105,7 +106,7 @@ public class RequestUtils {
                 bufferedSink.writeUtf8(data);
             }
         };
-        Request request = new Request.Builder()
+        Request request = new Request.Builder().addHeader("Cookie", AppConst.Cookie)
                 .url(url).tag(url).post(body)
                 .build();
         client.newCall(request).enqueue(new Callback(){

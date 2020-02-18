@@ -1,7 +1,9 @@
 package com.zhiyi.ukafu.activitys;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,20 +13,19 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.zhiyi.ukafu.AppConst;
+import com.zhiyi.ukafu.BootRecevier;
 import com.zhiyi.ukafu.IMessageHander;
-import com.zhiyi.ukafu.JsInterface;
+import com.zhiyi.ukafu.NotificationMonitorService;
+import com.zhiyi.ukafu.js.JsInterface;
 import com.zhiyi.ukafu.MainService;
 import com.zhiyi.ukafu.QrcodeUploadActivity;
 import com.zhiyi.ukafu.R;
 import com.zhiyi.ukafu.components.ZyWebViewClient;
-import com.zhiyi.ukafu.util.DBHelper;
 import com.zhiyi.ukafu.util.DBManager;
 import com.zhiyi.ukafu.util.LogUtil;
 import com.zhiyi.ukafu.util.SystemProgramUtils;
@@ -37,7 +38,7 @@ public class WebViewActivity extends AppCompatActivity {
     private DBManager dbm;
     private String Url;
 
-
+    private BroadcastReceiver receiver = new BootRecevier();
     private MainService service;
     private IMessageHander msgHander = new IMessageHander() {
         @Override
@@ -92,12 +93,37 @@ public class WebViewActivity extends AppCompatActivity {
         dbm = new DBManager(this);
         String sck = dbm.getCookie(Url);
         ck.setCookie(Url,sck);
+        AppConst.Cookie = sck;
+        LogUtil.i("set cookie:"+sck);
 
 
         intent = new Intent(this, MainService.class);
         intent.putExtra("from", "MainActive");
         bindService(intent, conn, BIND_AUTO_CREATE);
+
+        IntentFilter filter = new IntentFilter(AppConst.IntentAction);
+        registerReceiver(receiver, filter);
+
+
+        if("true".equals(dbm.getConfig("auto"))){
+            openService();
+        }
     }
+
+    public boolean openService(){
+        ComponentName name = startService(new Intent(this, NotificationMonitorService.class));
+        if (name == null) {
+            Toast.makeText(getApplicationContext(), "服务开启失败", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        dbm.setConfig("auto","true");
+        return  true;
+    }
+
+    public void stopService(){
+        stopService(new Intent(this, NotificationMonitorService.class));
+    }
+
 
 //    @Override
 //    protected void onResume() {
@@ -142,6 +168,10 @@ public class WebViewActivity extends AppCompatActivity {
         }
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        unbindService(conn);
+        unregisterReceiver(receiver);
+        super.onDestroy();
+    }
 }

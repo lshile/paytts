@@ -2,7 +2,6 @@ ext {
     VIP = 1
 }
 apply plugin: 'com.android.application'
-
 android {
     signingConfigs {
         debug {

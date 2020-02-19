@@ -13,6 +13,7 @@ import com.zhiyi.ukafu.AppConst;
 import com.zhiyi.ukafu.BuildConfig;
 import com.zhiyi.ukafu.R;
 import com.zhiyi.ukafu.util.DBManager;
+import com.zhiyi.ukafu.util.LogUtil;
 import com.zhiyi.ukafu.util.StringUtils;
 import com.zhiyi.ukafu.util.ToastUtil;
 
@@ -54,12 +55,13 @@ public class InitActivity extends AppCompatActivity {
 
         if(!StringUtils.isEmpty(BuildConfig.BIND_URL)){
             this.loadHomePage(BuildConfig.BIND_URL);
-        }else if(StringUtils.isEmpty(url)){
+        }else if(!StringUtils.isEmpty(url)){
             this.loadHomePage(url);
         }
     }
 
     private void loadHomePage(String url){
+        LogUtil.i("home page:"+url);
         Intent intent = new Intent(InitActivity.this, WebViewActivity.class);
         intent.putExtra(AppConst.ACTION_URL, url);
         startActivity(intent);

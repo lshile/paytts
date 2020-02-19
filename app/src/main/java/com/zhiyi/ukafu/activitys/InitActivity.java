@@ -1,6 +1,7 @@
 package com.zhiyi.ukafu.activitys;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -53,6 +54,8 @@ public class InitActivity extends AppCompatActivity {
 
         if(!StringUtils.isEmpty(BuildConfig.BIND_URL)){
             this.loadHomePage(BuildConfig.BIND_URL);
+        }else if(StringUtils.isEmpty(url)){
+            this.loadHomePage(url);
         }
     }
 
@@ -72,6 +75,13 @@ public class InitActivity extends AppCompatActivity {
         if(!url.startsWith("http")){
             url = "http://"+url;
         }
+//        if(!url.endsWith(".html")) {
+//            Uri uri = Uri.parse(url);
+//            String path = uri.getPath();
+//            if (path == null || path.trim().length() < 1) {
+//                url = url + "/";
+//            }
+//        }
         dbm.setConfig(AppConst.KeyUKFHomeUrl,url);
         this.loadHomePage(url);
         return;

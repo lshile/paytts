@@ -89,16 +89,17 @@ public class QrcodeUploadActivity extends AppCompatActivity {
             LogUtil.e("数字格式不对,"+money);
             return;
         }
-        RequestData post = RequestData.newInstance(AppConst.NetTypeQrcodeUpload);
-        try {
-            if(!StringUtils.isEmpty(name)){
-                post.put("name",name);
-            }
-            post.put("money",money);
-            post.put("code",qrcode);
-        } catch (JSONException e) {
-        }
+
         if(forUpload){
+            RequestData post = RequestData.newInstance(AppConst.NetTypeQrcodeUpload);
+            try {
+                if(!StringUtils.isEmpty(name)){
+                    post.put("name",name);
+                }
+                post.put("money",money);
+                post.put("code",qrcode);
+            } catch (JSONException e) {
+            }
             RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
                 @Override
                 protected void onJsonResponse(JSONObject data) {

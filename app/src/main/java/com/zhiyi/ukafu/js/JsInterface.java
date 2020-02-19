@@ -81,6 +81,9 @@ public final class JsInterface {
             AppConst.NoticeUrl = value;
             AppConst.inited = true;
         }
+        if(AppConst.KeyUKFNoticeSecret.equals(name)){
+            AppConst.Secret = value;
+        }
         dbManager.setConfig(name,value);
         return true;
     }

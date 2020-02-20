@@ -106,7 +106,7 @@ public class WebViewActivity extends AppCompatActivity {
 
 
         if("true".equals(dbm.getConfig("auto"))){
-            openService();
+            jsInterface.startNotifyMonitor();
         }
     }
 
@@ -116,7 +116,6 @@ public class WebViewActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "服务开启失败", Toast.LENGTH_LONG).show();
             return false;
         }
-        dbm.setConfig("auto","true");
         return  true;
     }
 

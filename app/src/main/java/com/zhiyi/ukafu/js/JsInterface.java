@@ -26,7 +26,7 @@ public final class JsInterface {
         this.webView = webview;
         this.activity = activity;
         callback = "alert";
-         dbManager = new DBManager(this.activity);
+        dbManager = new DBManager(this.activity);
     }
 
     @JavascriptInterface
@@ -63,16 +63,20 @@ public final class JsInterface {
         return dbManager.getConfig(name);
     }
 
+    public void startNotifyMonitor(){
+        if(!AppUtil.isNotifycationEnabled(this.activity)){
+            AppUtil.openNotificationListenSettings(this.activity);
+        }
+        activity.openService();
+    }
+
     @JavascriptInterface
     public boolean setConfig(String name,String value){
         LogUtil.i("set config "+name+"="+value);
         if("auto".equals(name)){
             boolean auto = "true".equals(value.toLowerCase());
             if(auto){
-                if(!AppUtil.isNotifycationEnabled(this.activity)){
-                    AppUtil.openNotificationListenSettings(this.activity);
-                }
-                activity.openService();
+                this.startNotifyMonitor();
             }else{
                 activity.stopService();
             }

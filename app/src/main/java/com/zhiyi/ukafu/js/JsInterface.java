@@ -73,9 +73,10 @@ public final class JsInterface {
     @JavascriptInterface
     public boolean setConfig(String name,String value){
         LogUtil.i("set config "+name+"="+value);
+        boolean bvalue = "true".equals(value.toLowerCase());
         if("auto".equals(name)){
-            boolean auto = "true".equals(value.toLowerCase());
-            if(auto){
+
+            if(bvalue){
                 this.startNotifyMonitor();
             }else{
                 activity.stopService();
@@ -84,9 +85,10 @@ public final class JsInterface {
         if(AppConst.KeyUKFNoticeUrl.equals(name)){
             AppConst.NoticeUrl = value;
             AppConst.inited = true;
-        }
-        if(AppConst.KeyUKFNoticeSecret.equals(name)){
+        }else if(AppConst.KeyUKFNoticeSecret.equals(name)){
             AppConst.Secret = value;
+        }else if(AppConst.KeyUKFVoice.equals(name)){
+            AppConst.sec
         }
         dbManager.setConfig(name,value);
         return true;

@@ -25,6 +25,7 @@ public class AppConst {
     public static final String KeyUKFNoticeAppId = "uk_notice_appid";
     public static final String KeyUKFNoticeToken = "uk_notice_token";
     public static final String KeyUKFNoticeSecret = "uk_notice_secret";
+    public static final String KeyUKFVoice = "audio";
     public static final String KeyBoolLog = "b_set_log";
 //    public static final String KeyBoolWx = "b_set_wx";
 //    public static final String KeyBoolZfb = "b_set_zfb";

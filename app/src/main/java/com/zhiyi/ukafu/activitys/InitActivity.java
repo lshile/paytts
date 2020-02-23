@@ -27,7 +27,7 @@ public class InitActivity extends AppCompatActivity {
 
         InitNoticeParam();
         //"http://faka.ukafu.com/notify_api";
-        String url = dbm.getConfig(AppConst.KeyUKFNoticeUrl);
+        String url = dbm.getConfig(AppConst.KeyUKFHomeUrl);
         EditText editTextApi = findViewById(R.id.edit_apiurl);
         if(!StringUtils.isEmpty(url)){
             editTextApi.setText(url);

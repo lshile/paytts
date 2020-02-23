@@ -42,7 +42,7 @@ android {
             applicationIdSuffix = 'vip'
             buildConfigField "String","BUGLY_APPID",'"1400068562"'
             buildConfigField "String","BUGLY_KEY",'"8e4f5482-b9c6-44d5-96af-58cab3dc407c"'
-            buildConfigField "String","BIND_URL",'"http://seller.m18.com"'
+            buildConfigField "String","BIND_URL",'"https://bpay.han444han.com/"'
             signingConfig signingConfigs.vip
 
         }

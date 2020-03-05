@@ -83,18 +83,18 @@ public class WebViewActivity extends AppCompatActivity {
         if (Url == null) {
             Url = "https://www.ukafu.com/default_app_h5.html";
         }
-        jsInterface = new JsInterface(webView,this);
-        webView.addJavascriptInterface(jsInterface,"client");
+        jsInterface = new JsInterface(webView, this);
+        webView.addJavascriptInterface(jsInterface, "client");
         webView.loadUrl(Url);
         CookieManager ck = CookieManager.getInstance();
         ck.setAcceptCookie(true);
-        ck.setAcceptThirdPartyCookies(webView,true);
+        ck.setAcceptThirdPartyCookies(webView, true);
         ck.getCookie(Url);
         dbm = new DBManager(this);
         String sck = dbm.getCookie(Url);
-        ck.setCookie(Url,sck);
+        ck.setCookie(Url, sck);
         AppConst.Cookie = sck;
-        LogUtil.i("set cookie:"+sck);
+        LogUtil.i("set cookie:" + sck);
 
 
         intent = new Intent(this, MainService.class);
@@ -105,21 +105,24 @@ public class WebViewActivity extends AppCompatActivity {
         registerReceiver(receiver, filter);
 
 
-        if("true".equals(dbm.getConfig("auto"))){
+        if ("true".equals(dbm.getConfig("auto"))) {
             jsInterface.startNotifyMonitor();
+        }
+        if ("true".equals(dbm.getConfig(AppConst.KeyUKFVoice))) {
+            jsInterface.setConfig(AppConst.KeyUKFVoice, "true");
         }
     }
 
-    public boolean openService(){
+    public boolean openService() {
         ComponentName name = startService(new Intent(this, NotificationMonitorService.class));
         if (name == null) {
             Toast.makeText(getApplicationContext(), "服务开启失败", Toast.LENGTH_LONG).show();
             return false;
         }
-        return  true;
+        return true;
     }
 
-    public void stopService(){
+    public void stopService() {
         stopService(new Intent(this, NotificationMonitorService.class));
     }
 
@@ -158,11 +161,11 @@ public class WebViewActivity extends AppCompatActivity {
 
             Intent qIntent = new Intent(WebViewActivity.this, QrcodeUploadActivity.class);
             qIntent.putExtra("file", currentPhotoString);
-            qIntent.putExtra("forupload",false);
+            qIntent.putExtra("forupload", false);
             startActivityForResult(qIntent, 101);
-        }else if(requestCode == SystemProgramUtils.REQUEST_CODE_PERMISSION){
-            LogUtil.i("请求权限结果:"+resultCode);
-        }else if(requestCode == 101){
+        } else if (requestCode == SystemProgramUtils.REQUEST_CODE_PERMISSION) {
+            LogUtil.i("请求权限结果:" + resultCode);
+        } else if (requestCode == 101) {
             jsInterface.onQrcodeload(intent);
         }
     }

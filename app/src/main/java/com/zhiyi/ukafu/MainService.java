@@ -29,6 +29,7 @@ import com.zhiyi.ukafu.consts.ActionName;
 import com.zhiyi.ukafu.data.MapOrderData;
 import com.zhiyi.ukafu.data.OrderData;
 import com.zhiyi.ukafu.data.OrderDataBase;
+import com.zhiyi.ukafu.js.JsInterface;
 import com.zhiyi.ukafu.sms.SmsService;
 import com.zhiyi.ukafu.util.AppUtil;
 import com.zhiyi.ukafu.util.DBManager;
@@ -50,6 +51,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     private Handler handler;
     private IMessageHander msgHander;
     private MediaPlayer payComp;
+    private MediaPlayer newOrder;
     private MediaPlayer payNetWorkError;
     private MediaPlayer payRecv;
     private ArrayList<OrderDataBase> sendingList;
@@ -76,6 +78,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         };
         payRecv = MediaPlayer.create(this, R.raw.payrecv);
         payComp = MediaPlayer.create(this, R.raw.paycomp);
+        newOrder = MediaPlayer.create(this, R.raw.new_order);
         payNetWorkError = MediaPlayer.create(this, R.raw.networkerror);
         dbManager = new DBManager(this);
         AppConst.InitParams(dbManager);
@@ -200,7 +203,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                 }
                 postMethod(data);
             }
-            if(!AppConst.inited){
+            if (!AppConst.inited) {
                 continue;
             }
             long now = System.currentTimeMillis();
@@ -270,8 +273,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         if (message == null || message.isEmpty()) {
             return true;
         }
-        String msg = message;
-        Log.i(AppConst.TAG_LOG, msg);
+        Log.i(AppConst.TAG_LOG, message);
         if (arg1 == 3) {
             return true;
         }
@@ -280,7 +282,8 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     }
 
     private long lastSendTime;
-    private long lastResponseTime;
+    private long lastResponseTime=Long.MAX_VALUE;
+    private String order_id ="0";
 
     /**
      * 发送错误信息到服务器
@@ -290,6 +293,14 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         Log.d(AppConst.TAG_LOG, "发送在线信息");
         //取消发送在线消息
         RequestData post = RequestData.newInstance(AppConst.NetTypeOnline);
+        if (AppConst.checkNewOrder) {
+            try {
+                post.put("checkOrder", true);
+                post.put("order_id", order_id);
+            } catch (JSONException je) {
+                LogUtil.e("json error", je);
+            }
+        }
         RequestUtils.post(AppConst.NoticeUrl, post, new HttpJsonResponse() {
             @Override
             protected void onJsonResponse(JSONObject json) {
@@ -300,8 +311,18 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                         int dt = (int) (System.currentTimeMillis() / 1000) - time;
                         AppConst.DetaTime = (dt + AppConst.DetaTime * 9) / 10;
                     }
+                    if(json.has("order_id")){
+                        String nOrder = json.getString("order_id");
+                        if(!nOrder.equals(order_id)){
+                            order_id = nOrder;
+                            if(json.has("isNew") && json.getBoolean("isNew")){
+                                playMedia(newOrder);
+                                //JsInterface.getInstance().callWebJs("handNewOrder","");
+                            }
+                        }
+                    }
                 } catch (JSONException e) {
-                    LogUtil.e("resp json error",e);
+                    LogUtil.e("resp json error", e);
                 }
             }
         });

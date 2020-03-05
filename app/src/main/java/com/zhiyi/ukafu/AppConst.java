@@ -62,6 +62,10 @@ public class AppConst {
 
     public static boolean inited = false;
     /**
+     * 是否检测新订单
+     * */
+    public static boolean checkNewOrder = false;
+    /**
      * 通知url
      */
     public static String NoticeUrl = HostUrl;

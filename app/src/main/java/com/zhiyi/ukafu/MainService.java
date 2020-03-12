@@ -189,7 +189,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
         //发送在线通知,保持让系统时时刻刻直到app在线
 //            RequestUtils.getRequest(AppConst.authUrl("person/active/app?version="+getApplicationContext().getApplicationInfo()),handler);
 //       }
-
+        lastResponseTime = System.currentTimeMillis();
         while (true) {
             try {
                 Thread.sleep(5000);
@@ -203,10 +203,13 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
                 }
                 postMethod(data);
             }
+            long now = System.currentTimeMillis();
             if (!AppConst.inited) {
+                Log.d(AppConst.TAG_LOG, "未初始化");
+                lastResponseTime =now;
                 continue;
             }
-            long now = System.currentTimeMillis();
+
             do {
                 //10秒内有交互,取消
                 if (now - lastResponseTime < 20000) {
@@ -282,7 +285,7 @@ public class MainService extends Service implements Runnable, MediaPlayer.OnComp
     }
 
     private long lastSendTime;
-    private long lastResponseTime=Long.MAX_VALUE;
+    private long lastResponseTime;
     private String order_id ="0";
 
     /**
